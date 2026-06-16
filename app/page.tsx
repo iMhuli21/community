@@ -1,53 +1,17 @@
+import Footer from "@/components/layout/footer";
+import Navbar from "@/components/layout/nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { landingRoutes } from "@/lib/constants";
-import { fraunces, inter } from "@/lib/fonts";
+import { fraunces } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Dot } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <main className="bg-c-bg">
-      <header className="sticky top-0 z-50 border-b border-line bg-white">
-        <nav className="flex items-center justify-between px-6 py-2">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/Logo.png"
-              width={500}
-              height={500}
-              alt="Logo"
-              className="w-12 h-12"
-            />
-            <h4
-              className={cn(
-                "text-lg tracking-tighter font-medium",
-                inter.className,
-              )}
-            >
-              Comm<em className="italic">unity</em>
-            </h4>
-          </div>
-          <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground font-medium">
-            {landingRoutes.map((route) => (
-              <Link
-                key={route.href}
-                href={route.href}
-                className="hover:text-green transition-colors duration-100 ease-in"
-              >
-                {route.label}
-              </Link>
-            ))}
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant={"outline"}>Sign in</Button>
-            <Button>Join free</Button>
-          </div>
-        </nav>
-      </header>
+      <Navbar />
       {/* HERO */}
       <section className="min-h-[70dvh] px-4 py-10 flex flex-col items-center gap-7">
         <Badge>
@@ -254,7 +218,10 @@ export default function Home() {
       <div className="border w-full border-line"></div>
 
       {/*WHY sect */}
-      <section className="p-10 mx-auto max-w-230 w-full space-y-9">
+      <section
+        id="whycommunity"
+        className="p-10 mx-auto max-w-230 w-full space-y-9"
+      >
         <div className="flex flex-col items-start gap-1">
           <span className="uppercase text-muted-foreground font-medium">
             Why community
@@ -408,7 +375,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="p-10  bg-black text-white">
+      <section id="howitworks" className="p-10  bg-black text-white">
         <div className="mx-auto max-w-230 space-y-9">
           <div className="flex flex-col items-start gap-1">
             <span className="uppercase text-muted-foreground font-medium">
@@ -476,7 +443,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="p-10 mx-auto max-w-230 w-full grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+      <section
+        id="foradmins"
+        className="p-10 mx-auto max-w-230 w-full grid grid-cols-1 md:grid-cols-2 gap-10 items-start"
+      >
         <div className="flex flex-col items-start gap-3">
           <span className="uppercase text-muted-foreground font-medium">
             roles &amp; structure
@@ -610,32 +580,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <footer className="bg-white flex flex-col items-start md:flex-row md:items-center md:justify-between gap-4 p-6">
-        <div className="flex items-center gap-2">
-          <Image
-            src="/Logo.png"
-            width={500}
-            height={500}
-            loading="lazy"
-            className="w-10 h-10"
-            alt="logo"
-          />
-          <h3 className={cn(inter.className, "tracking-tighter")}>
-            Comm<em className="italic">unity</em>
-          </h3>
-        </div>
-        <p
-          className={cn(
-            inter.className,
-            "text-xs text-muted-foreground uppercase font-medium",
-          )}
-        >
-          Developed by HULITHEDEV
-        </p>
-        <div className="text-xs text-muted-foreground">
-          &copy; 2026 Community. Built for neighbourhoods.
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

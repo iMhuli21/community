@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { instrument, inter } from "@/lib/fonts";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Comm-unity",
@@ -24,7 +25,10 @@ export default function RootLayout({
         inter.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster richColors />
+      </body>
     </html>
   );
 }
