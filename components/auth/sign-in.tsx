@@ -12,7 +12,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { fraunces, instrument, inter } from "@/lib/fonts";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { SignInFormSchema, signInFormSchema } from "@/lib/zod-schema";
+import { signInFormSchema } from "@/lib/zod-schema";
+import { SignInFormSchema } from "@/lib/types";
 
 export default function SignIn() {
   const route = useRouter();

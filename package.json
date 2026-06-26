@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "update-db": "npx drizzle-kit generate && npx drizzle-kit push"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

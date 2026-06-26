@@ -469,7 +469,7 @@ export default function LandingPage() {
           <Card>
             <CardContent className="flex flex-col items-start gap-3">
               <div className="flex items-center gap-3">
-                <Button size={"sm"} className="bg-primary">
+                <Button size={"sm"} className="bg-primary hover:bg-primary/80">
                   Admin
                 </Button>
                 <h4 className="font-semibold">Community admin</h4>
@@ -500,7 +500,11 @@ export default function LandingPage() {
           <Card className="border-[#b8dfc8] bg-green-light">
             <CardContent className="flex flex-col items-start gap-3">
               <div className="flex items-center gap-3">
-                <Button size={"sm"} variant={"ghost"} className="text-blue">
+                <Button
+                  size={"sm"}
+                  variant={"ghost"}
+                  className="text-blue hover:bg-blue-light"
+                >
                   Moderator
                 </Button>
                 <h4 className="font-semibold">Community moderator</h4>
@@ -530,7 +534,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-3">
                 <Button
                   size={"sm"}
-                  className="bg-green-light text-green border-[#b8dfc8]"
+                  className="bg-green-light text-green border-[#b8dfc8] hover:bg-green-light/80"
                 >
                   Member
                 </Button>

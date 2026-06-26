@@ -1,12 +1,10 @@
 "use server";
 
 import { auth } from "@/lib/auth/server";
-import {
-  SignUpFormSchema,
-  signUpFormSchema,
-  signInFormSchema,
-  SignInFormSchema,
-} from "@/lib/zod-schema";
+
+import { SignInFormSchema, SignUpFormSchema } from "@/lib/types";
+import { signUpFormSchema, signInFormSchema } from "@/lib/zod-schema";
+import { redirect } from "next/navigation";
 
 export async function signUpUserFn(values: SignUpFormSchema) {
   try {
@@ -35,6 +33,10 @@ export async function signUpUserFn(values: SignUpFormSchema) {
     if (e instanceof Error) {
       return {
         error: e.message,
+      };
+    } else {
+      return {
+        error: "Unknown Error",
       };
     }
   }
@@ -66,6 +68,10 @@ export async function signInUserFn(values: SignInFormSchema) {
     if (e instanceof Error) {
       return {
         error: e.message,
+      };
+    } else {
+      return {
+        error: "Unknown Error",
       };
     }
   }

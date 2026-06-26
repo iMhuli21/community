@@ -3,6 +3,7 @@ import { instrument, inter } from "@/lib/fonts";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "Comm-unity",
@@ -26,7 +27,7 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <Toaster richColors />
       </body>
     </html>

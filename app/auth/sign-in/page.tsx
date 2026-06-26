@@ -2,10 +2,12 @@ import SignIn from "@/components/auth/sign-in";
 import { auth } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function SignInPage() {
   const { data: session } = await auth.getSession();
 
-  if (session) {
+  if (session?.user) {
     return redirect("/home");
   }
   return (

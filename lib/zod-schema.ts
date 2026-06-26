@@ -10,8 +10,6 @@ export const signUpFormSchema = z.object({
     .min(8, { error: "Password shoudl atleast be 8 characters long." }),
 });
 
-export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
-
 export const signInFormSchema = z.object({
   email: z.email({ error: "Invalid email." }),
   password: z
@@ -19,4 +17,18 @@ export const signInFormSchema = z.object({
     .min(8, { error: "Password shoudl atleast be 8 characters long." }),
 });
 
-export type SignInFormSchema = z.infer<typeof signInFormSchema>;
+export const createGroupFormSchema = z.object({
+  name: z
+    .string({ error: "Name is required." })
+    .min(1, { error: "Name cannot be less the 1 character." }),
+  description: z
+    .string({ error: "Description is required." })
+    .min(1, { error: "Description cannot be less the 1 character." })
+    .max(300, { error: "Description cannot be more the 300 characters." }),
+  suburb: z
+    .string({ error: "Suburb/area is required." })
+    .min(1, { error: "Suburb / area cannot be less the 1 character." }),
+  cityMunicipality: z
+    .string({ error: "City/Municipality is required." })
+    .min(1, { error: "City / Municpality cannot be less the 1 character." }),
+});

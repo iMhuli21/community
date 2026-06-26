@@ -12,7 +12,8 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent } from "@/components/ui/card";
 import { fraunces, instrument, inter } from "@/lib/fonts";
-import { SignUpFormSchema, signUpFormSchema } from "@/lib/zod-schema";
+import { signUpFormSchema } from "@/lib/zod-schema";
+import { SignUpFormSchema } from "@/lib/types";
 
 export default function SignUp() {
   const route = useRouter();
