@@ -1,43 +1,142 @@
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Badge } from "../ui/badge";
-import { Card, CardContent } from "../ui/card";
+"use client";
 
-export default function GroupCard() {
+import { Card, CardContent } from "../ui/card";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { truncateWord } from "@/lib/utils";
+import GroupDropDown from "./group-dropdown";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth/auth-client";
+import { Skeleton } from "../ui/skeleton";
+import { useMemo } from "react";
+import { joinGroupFn } from "@/actions/group/join-group";
+import { toast } from "sonner";
+
+interface Props {
+  info: {
+    name: string;
+    id: string;
+    updatedAt: Date;
+    slug: string;
+    description: string;
+    suburb: string;
+    city_municipality: string;
+    color: string;
+    creatorId: string;
+    membersCount?: number;
+    members: {
+      user_id: string;
+      id: string;
+      status: "Mod" | "Admin" | "Member";
+    }[];
+  };
+}
+
+export default function GroupCard({ info }: Props) {
+  console.log(info);
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["client-auth", info.id],
+    queryFn: () => authClient.getSession(),
+  });
+
+  const session = data?.data;
+
+  const mutation = useMutation({
+    mutationFn: joinGroupFn,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["limited-groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group-count"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["search-group"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["joined-groups"],
+        }),
+      ]);
+    },
+  });
+
+  const { isPending } = mutation;
+
+  const hasJoined = useMemo(() => {
+    return info.members.filter((member) => member.user_id === session?.user.id);
+  }, [info, session]);
+
+  const handleJoinGroup = async () => {
+    const res = await mutation.mutateAsync(info.id);
+
+    if (res?.error) {
+      return toast.error("Error", { description: res.error });
+    } else if (res?.success) {
+      toast.success("Success", {
+        description: res.success,
+      });
+    }
+  };
+
+  if (isLoading) {
+    return <Skeleton className="w-100 h-37" />;
+  }
+
   return (
-    <Card className="max-w-sm w-full">
-      <CardContent className="space-y-6">
-        <div className="flex items-start gap-4 justify-between ">
-          <div className="flex items-start gap-3">
-            <Avatar size="lg">
-              <AvatarFallback className="bg-green-light text-green font-medium">
-                PM
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-start gap-0">
-              <span className="font-medium">Pimville Ward 45</span>
-              <div className="flex items-center gap-1">
-                <div className="size-0.5 bg-gray-400 rounded-full"></div>
-                <span className="text-muted-foreground text-xs">
-                  876 members
+    <Link href={`/group/${encodeURIComponent(info.id)}`}>
+      <Card className="w-75 min-h-64 hover:ring-green hover:ease-in-out hover:duration-150 relative rounded-lg">
+        <CardContent>
+          <div
+            style={{ backgroundColor: info.color }}
+            className="absolute h-18 w-full top-0 left-0"
+          ></div>
+          <Avatar>
+            <AvatarFallback className="rounded-md bg-green-light text-green absolute top-7 left-0 font-medium text-sm border border-green-light">
+              {truncateWord(info.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="absolute top-20 flex flex-col gap-3 w-full left-0 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col items-start gap-0">
+                <h5 className="font-semibold text-base">{info.name}</h5>
+                <div className="flex items-center gap-1">
+                  <div className="size-1 bg-line rounded-full"></div>
+                  <span className="text-xs opacity-50">{info.suburb}</span>
+                </div>
+              </div>
+              {session?.user.id === info.creatorId && <GroupDropDown />}
+            </div>
+            <p className="text-[0.78rem] text-muted-foreground w-full line-clamp-2">
+              {info.description}
+            </p>
+            <div className="border-t border-line"></div>
+            <div className="flex items-center gap-4 justify-between">
+              <div className="flex items-center gap-1 font-medium text-sm tracking-tight">
+                <span>{info.membersCount}</span>
+                <span className="font-normal opacity-50">
+                  {info.membersCount === 1 ? "member" : "members"}
                 </span>
               </div>
+              <Button
+                size={"sm"}
+                variant={"ghost"}
+                className="text-green bg-green-light"
+                onClick={handleJoinGroup}
+                disabled={isPending}
+              >
+                {hasJoined.length > 0 ? "Joined" : "Join"}
+              </Button>
             </div>
           </div>
-          <Badge variant={"member"} className="text-xs rounded-sm">
-            Member
-          </Badge>
-        </div>
-        <div className="border-t border-line"></div>
-        <div className="flex items-center gap-4 justify-between text-muted-foreground tracking-tight font-medium">
-          <div className="flex items-center gap-2">
-            <div className="size-1.5 rounded-full bg-red-600"></div>
-            <span className="truncate">
-              New report: water outage on Khumalo St
-            </span>
-          </div>
-          <span>14m</span>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

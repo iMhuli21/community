@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryProvider } from "@/hooks/providers/react-query/query-provider";
 
 export const metadata: Metadata = {
   title: "Comm-unity",
@@ -27,8 +28,10 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster richColors />
+        <QueryProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster richColors />
+        </QueryProvider>
       </body>
     </html>
   );

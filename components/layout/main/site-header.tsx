@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import AppTitle from "./app-title";
@@ -14,11 +13,11 @@ export async function SiteHeader() {
         <SidebarTrigger className="-ml-1" />
         <Separator
           orientation="vertical"
-          className="mx-2 data-[orientation=vertical]:h-4"
+          className="mx-2 data-[orientation=vertical]:h-8"
         />
         <AppTitle />
         <div className="ml-auto flex items-center gap-2">
-          {session?.user && <NavAvatar name={session.user.name} />}
+          {session?.user.id && <NavAvatar name={session.user.name} />}
         </div>
       </div>
     </header>

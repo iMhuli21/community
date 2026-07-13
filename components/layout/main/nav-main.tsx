@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export function NavMain({
   items,
@@ -25,9 +26,11 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton tooltip={item.label}>
-                {item.icon && <item.icon />}
-                <span>{item.label}</span>
+              <SidebarMenuButton tooltip={item.label} asChild>
+                <Link href={item.href}>
+                  {item.icon && <item.icon />}
+                  <span>{item.label}</span>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

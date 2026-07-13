@@ -5,7 +5,7 @@ import {
   signInFormSchema,
   signUpFormSchema,
 } from "./zod-schema";
-import { user } from "./db/schema";
+import { group, member, user } from "./db/schema";
 
 export type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
 export type SignInFormSchema = z.infer<typeof signInFormSchema>;
@@ -22,3 +22,5 @@ export type RouteIcon = {
 
 //db
 export type User = typeof user.$inferSelect;
+export type Group = typeof group.$inferSelect;
+export type Member = typeof member.$inferSelect;

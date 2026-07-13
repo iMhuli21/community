@@ -7,14 +7,14 @@ export const signUpFormSchema = z.object({
   email: z.email({ error: "Invalid email." }),
   password: z
     .string({ error: "Password is required" })
-    .min(8, { error: "Password shoudl atleast be 8 characters long." }),
+    .min(8, { error: "Password should atleast be 8 characters long." }),
 });
 
 export const signInFormSchema = z.object({
   email: z.email({ error: "Invalid email." }),
   password: z
     .string({ error: "Password is required" })
-    .min(8, { error: "Password shoudl atleast be 8 characters long." }),
+    .min(8, { error: "Password should atleast be 8 characters long." }),
 });
 
 export const createGroupFormSchema = z.object({

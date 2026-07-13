@@ -50,3 +50,7 @@ export const community_groups = [
     label: "Primville Ward 45",
   },
 ];
+
+export const maxItems = 15;
+
+export const contentLimit = 4;

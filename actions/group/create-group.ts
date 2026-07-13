@@ -2,21 +2,18 @@
 
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
-import { group, user } from "@/lib/db/schema";
+import { group, member, user } from "@/lib/db/schema";
 import { CreateGroupSchema } from "@/lib/types";
-import { generateSlug } from "@/lib/utils";
+import { generateSlug, getRandomPaletteColor } from "@/lib/utils";
 import { createGroupFormSchema } from "@/lib/zod-schema";
 
 export async function createGroupFn(values: CreateGroupSchema) {
   try {
-    console.log("Checking auth");
     const session = await auth.getSession();
 
     if (!session?.data?.user.id) {
       return { error: "User not logged in." };
     }
-
-    console.log("Checking values sent");
 
     const data = createGroupFormSchema.safeParse(values);
 
@@ -24,16 +21,13 @@ export async function createGroupFn(values: CreateGroupSchema) {
       return { error: "Invalid data sent." };
     }
 
-    console.log("Extracting data from object");
     const { cityMunicipality, description, name, suburb } = data.data;
 
-    console.log("Checking for user in db");
     //check if user in db
     const findUser = await db.query.user.findFirst({
       where: (u, { eq }) => eq(u.userId, session.data?.user.id!),
     });
 
-    console.log("creating user");
     //if no user create the user in the db then create group
     if (!findUser) {
       //create user
@@ -44,35 +38,36 @@ export async function createGroupFn(values: CreateGroupSchema) {
       });
     }
     //create group
-
-    console.log("generating slug");
     const generatedSlug = generateSlug(name);
 
     console.log("creating group");
-    await db.insert(group).values({
-      city_municipality: cityMunicipality,
-      description,
-      name,
-      suburb,
-      creatorId: session.data.user.id,
-      slug: generatedSlug,
+
+    const new_group = await db
+      .insert(group)
+      .values({
+        city_municipality: cityMunicipality,
+        description,
+        name,
+        suburb,
+        color: getRandomPaletteColor(),
+        creatorId: session.data.user.id,
+        slug: generatedSlug,
+      })
+      .returning({ new_group_id: group.id, new_creator_id: group.creatorId });
+
+    //make the user a member of the group and admin privellage
+    await db.insert(member).values({
+      group_id: new_group[0].new_group_id,
+      user_id: new_group[0].new_creator_id,
+      status: "Admin",
     });
 
     return {
       success: "Successfully created new group.",
     };
   } catch (e) {
-    console.log("////", typeof e, JSON.stringify(e)); // add this
-    console.error(e);
-
-    if (e instanceof Error) {
-      return {
-        error: e.message,
-      };
-    }
-
     return {
-      error: "Unknown",
+      error: e instanceof Error ? e.message : "Unknown Error",
     };
   }
 }

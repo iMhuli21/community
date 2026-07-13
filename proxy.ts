@@ -1,8 +1,6 @@
 import { auth } from "@/lib/auth/server";
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes = ["/home", "/settings", "/group/create"];
-
 export default async function middleware(request: NextRequest) {
   // Let Server Actions through — they handle their own auth internally
   const isServerAction =
@@ -18,5 +16,12 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/home", "/settings", "/group/create"],
+  matcher: [
+    "/home",
+    "/settings",
+    "/group/create",
+    "/groups",
+    "/group/:path*",
+    "/search",
+  ],
 };

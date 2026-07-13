@@ -15,11 +15,14 @@ import { Separator } from "../ui/separator";
 import { cn, truncateWord } from "@/lib/utils";
 import { fraunces } from "@/lib/fonts";
 import { useRouter } from "next/navigation";
-import { createGroupFn } from "@/actions/group/create-group";
 import { toast } from "sonner";
+import { createGroupFn } from "@/actions/group/create-group";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function CreateGroupForm() {
   const route = useRouter();
+
+  const queryClient = useQueryClient();
 
   const form = useForm<CreateGroupSchema>({
     mode: "onChange",
@@ -32,6 +35,23 @@ export default function CreateGroupForm() {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: createGroupFn,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["limited-groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group-count"],
+        }),
+      ]);
+    },
+  });
+
   const {
     handleSubmit,
     control,
@@ -40,20 +60,19 @@ export default function CreateGroupForm() {
   } = form;
 
   const handleCreateGroup = async (values: CreateGroupSchema) => {
-    const res = await createGroupFn(values);
+    const res = await mutation.mutateAsync(values);
 
     if (res?.error) {
-      return toast.error("Error", {
-        description: res.error,
-      });
+      return toast.error("Error", { description: res.error });
     } else if (res?.success) {
       toast.success("Success", {
         description: res.success,
       });
 
-      return route.push("/home");
+      route.push("/home");
     }
   };
+
   return (
     <main className="flex items-center justify-center min-h-dvh">
       <form
