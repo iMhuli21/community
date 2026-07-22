@@ -1,1 +1,0 @@
-ALTER TABLE "group" ADD COLUMN "color" text NOT NULL;

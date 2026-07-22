@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { parseISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -35,3 +36,6 @@ export function getRandomPaletteColor() {
     .toString(16)
     .padStart(6, "0")}`;
 }
+
+export const toDate = (value: string | Date) =>
+  typeof value === "string" ? parseISO(value) : value;

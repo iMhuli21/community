@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import GroupCard from "./group-card";
 import GroupsSkeleton from "../skeletons/groups-skeleton";
+import JoinedGroupCard from "./joined-groups";
 
 export default function GroupsContent({ userName }: { userName: string }) {
   const { data, isLoading } = useQuery({
@@ -17,8 +18,6 @@ export default function GroupsContent({ userName }: { userName: string }) {
   if (isLoading) {
     return <GroupsSkeleton />;
   }
-
-  console.log(data);
 
   return (
     <main className="px-7 py-5 space-y-7">
@@ -38,7 +37,9 @@ export default function GroupsContent({ userName }: { userName: string }) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {data?.data &&
-          data.data.map((group) => <GroupCard key={group.id} info={group} />)}
+          data.data.map((group) => (
+            <JoinedGroupCard key={group.id} info={group} />
+          ))}
       </div>
     </main>
   );

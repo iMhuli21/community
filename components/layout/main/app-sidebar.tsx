@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={mainRoutes} />
-        <NavSecondary items={mainRoutes} />
+        <NavSecondary />
       </SidebarContent>
     </Sidebar>
   );

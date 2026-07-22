@@ -1,0 +1,2 @@
+ALTER TABLE "message" DROP CONSTRAINT "message_member_id_member_user_id_fkey";--> statement-breakpoint
+ALTER TABLE "message" ADD CONSTRAINT "message_member_id_member_id_fkey" FOREIGN KEY ("member_id") REFERENCES "member"("id") ON DELETE CASCADE;

@@ -1,0 +1,1 @@
+ALTER TABLE "message" ALTER COLUMN "member_id" SET DATA TYPE uuid USING "member_id"::uuid;

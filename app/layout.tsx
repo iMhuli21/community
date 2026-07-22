@@ -5,6 +5,10 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryProvider } from "@/hooks/providers/react-query/query-provider";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 export const metadata: Metadata = {
   title: "Comm-unity",
@@ -28,6 +32,7 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <QueryProvider>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster richColors />

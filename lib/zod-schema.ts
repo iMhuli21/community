@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { messageType } from "./db/schema";
 
 export const signUpFormSchema = z.object({
   name: z
@@ -31,4 +32,11 @@ export const createGroupFormSchema = z.object({
   cityMunicipality: z
     .string({ error: "City/Municipality is required." })
     .min(1, { error: "City / Municpality cannot be less the 1 character." }),
+});
+
+export const createMessageSchema = z.object({
+  message: z
+    .string()
+    .min(1, { error: "Message cannot be less than 1 character." })
+    .max(1000, { error: "Content cannot be more than 1000 characters." }),
 });

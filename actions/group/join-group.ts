@@ -17,8 +17,9 @@ export async function joinGroupFn(groupId: string) {
     await db
       .insert(member)
       .values({
-        group_id: groupId,
-        user_id: session.user.id,
+        groupId: groupId,
+        userId: session.user.id,
+        name: session.user.name,
       })
       .onConflictDoNothing();
 

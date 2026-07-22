@@ -2,6 +2,8 @@
 
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
+import { member } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function getGroupFn(id: string) {
   const { data: session } = await auth.getSession();
@@ -12,15 +14,20 @@ export async function getGroupFn(id: string) {
 
   //find the group with the id
   const findGroup = await db.query.group.findFirst({
-    where: (grp, { eq }) => eq(grp.id, id),
+    where: {
+      id,
+    },
     with: {
       members: {
         columns: {
           status: true,
-          user_id: true,
+          userId: true,
           id: true,
         },
       },
+    },
+    extras: {
+      membersCount: (table) => db.$count(member, eq(member.groupId, table.id)),
     },
   });
 

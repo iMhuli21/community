@@ -23,12 +23,12 @@ export async function searchGroupFn(query: string) {
         columns: {
           id: true,
           status: true,
-          user_id: true,
+          userId: true,
         },
       },
     },
     extras: {
-      membersCount: (table) => db.$count(member, eq(member.group_id, table.id)),
+      membersCount: (table) => db.$count(member, eq(member.groupId, table.id)),
     },
   });
 

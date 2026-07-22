@@ -22,14 +22,14 @@ export async function getGroupsFn(limit: number) {
       limit,
       extras: {
         membersCount: (table) =>
-          db.$count(member, eq(member.group_id, table.id)),
+          db.$count(member, eq(member.groupId, table.id)),
       },
       with: {
         members: {
           columns: {
             id: true,
             status: true,
-            user_id: true,
+            userId: true,
           },
         },
       },
@@ -57,7 +57,7 @@ export async function getGroupsCountFn() {
 
     const groupsCount = await db.$count(
       member,
-      eq(member.user_id, session.user.id),
+      eq(member.userId, session.user.id),
     );
 
     console.log(session.user.id);
@@ -84,24 +84,24 @@ export async function getJoinedGroupsFn(limit: number) {
     }
 
     //get the groups the logged in user has joined
-    const joined_groups = await db.query.group.findMany({
+    const joined_groups = await db.query.member.findMany({
+      where: {
+        userId: session.user.id,
+      },
       with: {
-        members: {
-          where: {
-            user_id: session.user.id,
-          },
-          columns: {
-            id: true,
-            status: true,
-            user_id: true,
+        group: {
+          extras: {
+            membersCount: (table) =>
+              db.$count(member, eq(member.groupId, table.id)),
           },
         },
       },
-      limit,
-      extras: {
-        membersCount: (table) =>
-          db.$count(member, eq(member.group_id, table.id)),
+      columns: {
+        id: true,
+        status: true,
+        userId: true,
       },
+      limit,
     });
 
     return {

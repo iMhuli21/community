@@ -1,6 +1,6 @@
 "use client";
 
-import { getGroupsFn } from "@/actions/group/get-groups";
+import { getJoinedGroupsFn } from "@/actions/group/get-groups";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -9,25 +9,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { maxItems } from "@/lib/constants";
-import { getRandomPaletteColor } from "@/lib/utils";
+import { sideBarLimit } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
 
-export function NavSecondary({
-  items,
-}: {
-  items: {
-    label: string;
-    href: string;
-    icon?: any;
-  }[];
-}) {
+export function NavSecondary() {
   const { data, isLoading } = useQuery({
-    queryKey: ["groups", maxItems],
-    queryFn: () => getGroupsFn(maxItems),
+    queryKey: ["groups", sideBarLimit],
+    queryFn: () => getJoinedGroupsFn(sideBarLimit),
   });
 
   if (isLoading) {
@@ -45,16 +35,16 @@ export function NavSecondary({
       </SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          {data?.groups ? (
-            data.groups.map((group) => (
-              <SidebarMenuItem key={group.id}>
+          {data?.data ? (
+            data.data.map((info) => (
+              <SidebarMenuItem key={info.group?.id}>
                 <SidebarMenuButton asChild>
-                  <Link href={`/group/${group.id}`}>
+                  <Link href={`/group/${info.group?.id}`}>
                     <div
                       className="size-2 rounded-full"
-                      style={{ backgroundColor: group.color }}
+                      style={{ backgroundColor: info.group?.color }}
                     ></div>
-                    {group.name}
+                    {info.group?.name}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -64,7 +54,7 @@ export function NavSecondary({
               You haven&apos;t created any communities yet.
             </p>
           )}
-          {data?.groups && data.groups.length === 0 && (
+          {data?.data && data.data.length === 0 && (
             <p className="opacity-50 text-xs w-40 ml-2">
               You haven&apos;t created any communities yet.
             </p>

@@ -19,15 +19,15 @@ interface Props {
       id: string;
       name: string;
       slug: string;
-      description: string;
-      suburb: string;
-      city_municipality: string;
-      color: string;
       creatorId: string;
-      updatedAt: Date;
+      description: string;
+      suburbArea: string;
+      cityMunicipality: string;
+      color: string;
+      membersCount: number;
       members: {
         id: string;
-        user_id: string;
+        userId: string;
         status: "Mod" | "Admin" | "Member";
       }[];
     };
@@ -42,7 +42,7 @@ export default function GroupContentHeader({ data }: Props) {
 
   const hasJoined = useMemo(() => {
     return data.data.members.filter(
-      (member) => member.user_id === session?.data?.user.id,
+      (member) => member.userId === session?.data?.user.id,
     );
   }, [data.data, session?.data]);
   return (
@@ -50,7 +50,7 @@ export default function GroupContentHeader({ data }: Props) {
       <div className="bg-black text-white p-5 flex flex-col gap-3 w-full">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <Avatar size="lg">
+            <Avatar size="lg" className="after:rounded-md">
               <AvatarFallback className="rounded-md bg-green-light text-green font-medium">
                 {truncateWord(data?.data?.name)}
               </AvatarFallback>
@@ -66,7 +66,7 @@ export default function GroupContentHeader({ data }: Props) {
               </span>
               <div className="flex items-center gap-2 text-white/60">
                 <PinIcon className="size-3" />
-                <span className="text-xs">{data?.data.city_municipality}</span>
+                <span className="text-xs">{data?.data.cityMunicipality}</span>
               </div>
             </div>
           </div>

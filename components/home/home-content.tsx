@@ -4,11 +4,14 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { fraunces } from "@/lib/fonts";
 import { Button } from "@/components/ui/button";
-import GroupCard from "@/components/group/group-card";
 import { useQueries } from "@tanstack/react-query";
 import { contentLimit } from "@/lib/constants";
-import { getGroupsCountFn, getGroupsFn } from "@/actions/group/get-groups";
+import {
+  getGroupsCountFn,
+  getJoinedGroupsFn,
+} from "@/actions/group/get-groups";
 import HomeSkeleton from "../skeletons/home-skeleton";
+import JoinedGroupCard from "../group/joined-groups";
 
 export default function HomeContent({ userName }: { userName: string }) {
   const result = useQueries({
@@ -19,7 +22,7 @@ export default function HomeContent({ userName }: { userName: string }) {
       },
       {
         queryKey: ["limited-groups", contentLimit],
-        queryFn: () => getGroupsFn(contentLimit),
+        queryFn: () => getJoinedGroupsFn(contentLimit),
       },
     ],
   });
@@ -48,12 +51,12 @@ export default function HomeContent({ userName }: { userName: string }) {
             <br /> <em className="italic text-green">your communities.</em>
           </h1>
           <span className="tracking-tight text-muted-foreground">
-            You&apos;re a member of {groupCount?.data?.count} communities. 4 new
-            updates since you last checked in.
+            You&apos;re a member of {groupCount?.data?.count ?? "0"}{" "}
+            communities. 4 new updates since you last checked in.
           </span>
           <div className="flex items-center gap-4">
             <Button size="lg" variant="outline">
-              + Join a community
+              <Link href="/search"> + Join a community</Link>
             </Button>
             <Button size="lg" asChild>
               <Link href="/group/create">+ Create a group</Link>
@@ -64,7 +67,7 @@ export default function HomeContent({ userName }: { userName: string }) {
       <section className="bg-c-bg border border-gray-300 grid grid-cols-2 divide-y md:divide-y-0 md:grid-cols-4  rounded-lg divide-x divide-gray-300 ">
         <div className="p-4">
           <h4 className={cn(fraunces.className, "text-2xl font-medium")}>
-            {groupCount?.data?.count}
+            {groupCount?.data?.count ?? 0}
           </h4>
           <span className="text-muted-foreground font-medium text-sm tracking-tight">
             Communities joined
@@ -102,7 +105,7 @@ export default function HomeContent({ userName }: { userName: string }) {
             appoint moderators, and start tracking local issues &mdash; out in
             the open, not buried in a group chat.
           </p>
-          <Button className="bg-white text-black" size="lg">
+          <Button className="bg-white text-black hover:bg-white/80" size="lg">
             + Create a community group
           </Button>
         </div>
@@ -115,12 +118,12 @@ export default function HomeContent({ userName }: { userName: string }) {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
-          {groupsData.data?.groups &&
-            groupsData.data.groups.length !== 0 &&
-            groupsData.data.groups.map((group) => (
-              <GroupCard key={group.id} info={group} />
+          {groupsData.data?.data &&
+            groupsData.data.data.length !== 0 &&
+            groupsData.data.data.map((info) => (
+              <JoinedGroupCard key={info.id} info={info} />
             ))}
-          {groupsData.data?.groups && groupsData.data.groups.length === 0 && (
+          {groupsData.data?.data && groupsData.data.data.length === 0 && (
             <div className="w-75 p-5 border border-line bg-c-bg flex flex-col items-center justify-center rounded-lg gap-2">
               <span className="font-medium">Don&apos;t see your area?</span>
               <p className="text-sm text-center text-muted-foreground">
@@ -132,7 +135,7 @@ export default function HomeContent({ userName }: { userName: string }) {
               </Button>
             </div>
           )}
-          {!groupsData.data?.groups && (
+          {!groupsData.data?.data && (
             <div className="w-75 p-5 border border-line bg-c-bg flex flex-col items-center justify-center rounded-lg gap-2">
               <span className="font-medium">Don&apos;t see your area?</span>
               <p className="text-sm text-center text-muted-foreground">

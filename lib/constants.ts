@@ -54,3 +54,5 @@ export const community_groups = [
 export const maxItems = 15;
 
 export const contentLimit = 4;
+
+export const sideBarLimit = 6;
