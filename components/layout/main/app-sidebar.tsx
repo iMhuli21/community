@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { NavMain } from "@/components/layout/main/nav-main";
-
 import {
   Sidebar,
   SidebarContent,

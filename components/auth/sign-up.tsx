@@ -31,6 +31,7 @@ export default function SignUp() {
     control,
     handleSubmit,
     formState: { isSubmitting },
+    reset,
   } = form;
 
   const signUpUser = async (values: SignUpFormSchema) => {
@@ -43,6 +44,11 @@ export default function SignUp() {
     } else if (res?.success) {
       toast.success("Success", {
         description: res.success,
+      });
+      reset({
+        email: "",
+        password: "",
+        name: "",
       });
 
       return route.push("/auth/sign-in");

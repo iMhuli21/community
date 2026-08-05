@@ -1,41 +1,71 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Message from "./message";
 import { getGroupMessagesFn } from "@/actions/message/get-group-messages";
 import { toast } from "sonner";
+import ErrorMessage from "@/components/error-message";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import { Loader2Icon } from "lucide-react";
 
-export default function Messages({ groupId }: { groupId: string }) {
-  const { data, isLoading } = useQuery({
-    queryKey: ["group-messages", groupId],
-    queryFn: () => getGroupMessagesFn(groupId),
+interface Props {
+  permissions: {
+    status: boolean;
+  };
+  groupId: string;
+}
+
+export default function Messages({ groupId, permissions }: Props) {
+  const { inView, ref } = useInView({
+    threshold: 0,
+    rootMargin: "200px",
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center font-medium tracking-tight min-h-dvh">
-        Loading...
-      </div>
-    );
-  }
-
-  if (data?.error) {
-    toast.error("Error", {
-      description: data.error,
+  const { data, isFetchingNextPage, fetchNextPage, hasNextPage, error } =
+    useInfiniteQuery({
+      queryKey: ["group-messages", groupId],
+      queryFn: ({ pageParam }) =>
+        getGroupMessagesFn({ groupId, cursor: pageParam }),
+      initialPageParam: undefined as string | undefined,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
-    return (
-      <div className="flex items-center justify-center font-medium tracking-tight min-h-dvh">
-        {data.error}
-      </div>
-    );
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, isFetchingNextPage]);
+
+  if (error) {
+    toast.error("Error", {
+      description: error.message,
+    });
+    return <ErrorMessage message={error.message} />;
   }
 
   return (
-    <div className="bg-white w-full mx-auto rounded-lg">
-      {data?.messages &&
-        data.messages.map((message) => (
-          <Message key={message.id} message={message} />
-        ))}
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="bg-white w-full mx-auto rounded-lg">
+        {data &&
+          data.pages.map((page) =>
+            page.messages.map((message) => (
+              <Message
+                key={message.id}
+                message={message}
+                permissions={permissions.status}
+              />
+            )),
+          )}
+      </div>
+      <div ref={ref}>
+        {isFetchingNextPage && (
+          <div className="flex items-center gap-1 text-sm tracking-tight">
+            <Loader2Icon className="animate-spin" />
+            <span>Loading more...</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

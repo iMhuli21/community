@@ -4,32 +4,35 @@ import { Button } from "../ui/button";
 import { fraunces } from "@/lib/fonts";
 import { Badge } from "../ui/badge";
 import { cn, truncateWord } from "@/lib/utils";
-import { CheckIcon, PinIcon } from "lucide-react";
+import { CheckIcon, PinIcon, Share2Icon } from "lucide-react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";
+import { getGroupStatsFn } from "@/actions/group/get-group-stats";
+import ErrorMessage from "../error-message";
 
 interface Props {
   data: {
-    error: null;
-    data: {
+    id: string;
+    name: string;
+    slug: string;
+    creatorId: string;
+    description: string;
+    suburbArea: string;
+    cityMunicipality: string;
+    color: string;
+    membersCount: number;
+    members: {
       id: string;
-      name: string;
-      slug: string;
-      creatorId: string;
-      description: string;
-      suburbArea: string;
-      cityMunicipality: string;
-      color: string;
-      membersCount: number;
-      members: {
-        id: string;
-        userId: string;
-        status: "Mod" | "Admin" | "Member";
-      }[];
+      userId: string;
+      status: "Mod" | "Admin" | "Member";
+    }[];
+    stats: {
+      reports: number;
+      resolvedReports: number;
     };
   };
 }
@@ -41,18 +44,18 @@ export default function GroupContentHeader({ data }: Props) {
   });
 
   const hasJoined = useMemo(() => {
-    return data.data.members.filter(
+    return data.members.filter(
       (member) => member.userId === session?.data?.user.id,
     );
-  }, [data.data, session?.data]);
+  }, [data, session?.data]);
   return (
     <div className="space-y-2 border-b border-line">
       <div className="bg-black text-white p-5 flex flex-col gap-3 w-full">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             <Avatar size="lg" className="after:rounded-md">
               <AvatarFallback className="rounded-md bg-green-light text-green font-medium">
-                {truncateWord(data?.data?.name)}
+                {truncateWord(data?.name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-start gap-0">
@@ -62,38 +65,50 @@ export default function GroupContentHeader({ data }: Props) {
                   fraunces.className,
                 )}
               >
-                {data?.data.name}
+                {data?.name}
               </span>
               <div className="flex items-center gap-2 text-white/60">
                 <PinIcon className="size-3" />
-                <span className="text-xs">{data?.data.cityMunicipality}</span>
+                <span className="text-xs">{data?.cityMunicipality}</span>
               </div>
             </div>
           </div>
-          {hasJoined.length > 0 ? (
-            <Button>
-              <CheckIcon /> Joined
+          <div className="flex items-center gap-3">
+            <Button
+              size={"sm"}
+              className="px-3 flex items-center gap-3 bg-[rgba(255,255,255,.08)] border border-[rgba(255,255,255,.13)] text-white/80"
+            >
+              <Share2Icon className="size-3" />
+              Share
             </Button>
-          ) : (
-            <Button>
-              <CheckIcon /> Join
-            </Button>
-          )}
+            {hasJoined.length > 0 ? (
+              <Button
+                size="sm"
+                className="bg-[rgba(192,57,43,.15)] text-[#f87171] border border-[rgba(192,57,43,.3)] hover:bg-[rgba(192,57,43,.15)]/80 "
+              >
+                Leave Group
+              </Button>
+            ) : (
+              <Button>
+                <CheckIcon /> Join
+              </Button>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-5">
           <Badge className="h-5 rounded-sm">Public</Badge>
           <div className="flex items-center gap-1 text-sm text-white tracking-tight font-medium">
-            <span className="text-white/90">{data?.data?.members.length}</span>
+            <span className="text-white/90">{data?.members.length}</span>
             <span className="text-white/50">
-              {data?.data?.members.length === 1 ? "member" : "members"}
+              {data?.members.length === 1 ? "member" : "members"}
             </span>
           </div>
           <div className="flex items-center gap-1 text-sm text-white tracking-tight font-medium">
-            <span className="text-white/90">38</span>
+            <span className="text-white/90">{data?.stats.reports}</span>
             <span className="text-white/50">open reports</span>
           </div>
           <div className="flex items-center gap-1 text-sm text-white tracking-tight font-medium">
-            <span className="text-white/90">12</span>
+            <span className="text-white/90">{data?.stats.resolvedReports}</span>
             <span className="text-white/50">resolved this month</span>
           </div>
         </div>
@@ -103,28 +118,22 @@ export default function GroupContentHeader({ data }: Props) {
           <ToggleGroupItem
             size={"sm"}
             value="latest"
-            className="text-muted-foreground data-[state=on]:text-black"
+            className="text-muted-foreground data-[state=on]:text-white data-[state=on]:bg-black h-7 rounded-sm tracking-tighter px-3"
           >
             Latest
           </ToggleGroupItem>
-          <ToggleGroupItem
-            size={"sm"}
-            value="top"
-            className="text-muted-foreground data-[state=on]:text-black"
-          >
-            Top
-          </ToggleGroupItem>
+
           <ToggleGroupItem
             size={"sm"}
             value="reports"
-            className="text-muted-foreground data-[state=on]:text-black"
+            className="text-muted-foreground data-[state=on]:text-white data-[state=on]:bg-black h-7 rounded-sm tracking-tighter px-3"
           >
             Reports
           </ToggleGroupItem>
           <ToggleGroupItem
             size={"sm"}
             value="resolved"
-            className="text-muted-foreground data-[state=on]:text-black"
+            className="text-muted-foreground data-[state=on]:text-white data-[state=on]:bg-black h-7 rounded-sm tracking-tighter px-3"
           >
             Resolved
           </ToggleGroupItem>

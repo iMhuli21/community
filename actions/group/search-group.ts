@@ -9,7 +9,7 @@ export async function searchGroupFn(query: string) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user.id) {
-    return { error: "User not logged in.", data: null };
+    throw new Error("User not logged in.");
   }
 
   const searchGroup = await db.query.group.findMany({
@@ -32,8 +32,5 @@ export async function searchGroupFn(query: string) {
     },
   });
 
-  return {
-    error: null,
-    data: searchGroup,
-  };
+  return searchGroup;
 }

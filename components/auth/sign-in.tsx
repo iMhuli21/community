@@ -30,6 +30,7 @@ export default function SignIn() {
     control,
     handleSubmit,
     formState: { isSubmitting },
+    reset,
   } = form;
 
   const signInUser = async (values: SignInFormSchema) => {
@@ -42,6 +43,11 @@ export default function SignIn() {
     } else if (res?.success) {
       toast.success("Success", {
         description: res.success,
+      });
+
+      reset({
+        email: "",
+        password: "",
       });
 
       return route.push("/home");

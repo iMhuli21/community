@@ -2,63 +2,76 @@
 
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
-import { message } from "@/lib/db/schema";
-import { CreateMessageSchema, MessageType } from "@/lib/types";
+import { message, messageAttachments } from "@/lib/db/schema";
+import { CreateMessageSchema, MessageType, UploadDocsType } from "@/lib/types";
 import { createMessageSchema } from "@/lib/zod-schema";
 
-export async function sendMessageFn(
-  values: CreateMessageSchema,
-  groupId: string,
-  messageType: MessageType,
-  images: string[],
-) {
-  try {
-    const { data: session } = await auth.getSession();
+interface SendMessage {
+  values: CreateMessageSchema;
+  groupId: string;
+  messageType: MessageType;
+  images: string[];
+  docs: UploadDocsType[];
+}
 
-    if (!session?.user.id) {
-      return {
-        error: "User not logged in.",
-      };
-    }
+export async function sendMessageFn({
+  values,
+  groupId,
+  messageType,
+  images,
+  docs,
+}: SendMessage) {
+  const { data: session } = await auth.getSession();
 
-    const validateData = createMessageSchema.safeParse(values);
+  if (!session?.user.id) {
+    throw new Error("User not logged in");
+  }
 
-    if (validateData.error || groupId.trim().length === 0) {
-      return {
-        error: "Invalid data sent.",
-      };
-    }
+  const validateData = createMessageSchema.safeParse(values);
 
-    //check if the user is in the group
-    const isMember = await db.query.member.findFirst({
-      where: {
-        userId: session.user.id,
-        groupId,
-      },
-    });
+  if (validateData.error || groupId.trim().length === 0) {
+    throw new Error("Invalid data sent.");
+  }
 
-    if (!isMember) {
-      return {
-        error: "You are not a member of this group",
-      };
-    }
+  //check if the user is in the group
+  const isMember = await db.query.member.findFirst({
+    where: {
+      userId: session.user.id,
+      groupId,
+    },
+  });
 
-    const { message: body } = validateData.data;
+  if (!isMember) {
+    throw new Error("You are not a member of this group");
+  }
 
-    await db.insert(message).values({
+  const { message: body } = validateData.data;
+
+  const new_message = await db
+    .insert(message)
+    .values({
       body,
       type: messageType,
       groupId,
       memberId: isMember.id,
       media: images,
-    });
+    })
+    .returning({ message_id: message.id });
 
-    return {
-      success: "Message sent.",
-    };
-  } catch (e) {
-    return {
-      error: e instanceof Error ? e.message : "Unknown",
-    };
+  if (docs.length > 0) {
+    await db.insert(messageAttachments).values(
+      docs.map((doc) => ({
+        messageId: new_message[0].message_id,
+        fileName: doc.name,
+        fileSize: doc.size,
+        fileType: doc.type,
+        fileUrl: doc.ufsUrl,
+        fileKey: doc.key,
+      })),
+    );
   }
+
+  return {
+    success: "Message sent.",
+  };
 }

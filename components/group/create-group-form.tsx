@@ -62,8 +62,8 @@ export default function CreateGroupForm() {
   const handleCreateGroup = async (values: CreateGroupSchema) => {
     const res = await mutation.mutateAsync(values);
 
-    if (res?.error) {
-      return toast.error("Error", { description: res.error });
+    if (mutation.error) {
+      return toast.error("Error", { description: mutation.error?.message });
     } else if (res?.success) {
       toast.success("Success", {
         description: res.success,

@@ -33,7 +33,6 @@ interface Props {
 }
 
 export default function GroupCard({ info }: Props) {
-  console.log(info);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -75,8 +74,8 @@ export default function GroupCard({ info }: Props) {
   const handleJoinGroup = async () => {
     const res = await mutation.mutateAsync(info.id);
 
-    if (res?.error) {
-      return toast.error("Error", { description: res.error });
+    if (mutation.error) {
+      return toast.error("Error", { description: mutation.error?.message });
     } else if (res?.success) {
       toast.success("Success", {
         description: res.success,

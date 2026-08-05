@@ -6,12 +6,9 @@ import { truncateWord } from "@/lib/utils";
 import GroupDropDown from "./group-dropdown";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";
 import { Skeleton } from "../ui/skeleton";
-import { useMemo } from "react";
-import { joinGroupFn } from "@/actions/group/join-group";
-import { toast } from "sonner";
 
 interface Props {
   info: {

@@ -3,9 +3,9 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { inter } from "@/lib/fonts";
 import { Button } from "../ui/button";
+import NavAvatar from "./nav-avatar";
 import { auth } from "@/lib/auth/server";
 import { landingRoutes } from "@/lib/constants";
-import NavAvatar from "./nav-avatar";
 
 export default async function Navbar() {
   const { data: session } = await auth.getSession();

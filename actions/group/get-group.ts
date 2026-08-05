@@ -4,12 +4,13 @@ import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
 import { member } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { getGroupStatsFn } from "./get-group-stats";
 
 export async function getGroupFn(id: string) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user.id) {
-    return { error: "User not logged In.", data: null };
+    throw new Error("User not logged In.");
   }
 
   //find the group with the id
@@ -32,8 +33,10 @@ export async function getGroupFn(id: string) {
   });
 
   if (!findGroup) {
-    return { error: "Group does not exist.", data: null };
+    throw new Error("Group does not exist.");
   }
 
-  return { error: null, data: findGroup };
+  const stats = await getGroupStatsFn(id);
+
+  return { ...findGroup, stats };
 }

@@ -28,8 +28,8 @@ export const mainRoutes: RouteIcon[] = [
     icon: HomeIcon,
   },
   {
-    href: "/reports",
-    label: "Reports",
+    href: "/flags",
+    label: "Flags",
     icon: FlagTriangleRightIcon,
   },
   {
@@ -51,7 +51,7 @@ export const community_groups = [
   },
 ];
 
-export const maxItems = 15;
+export const maxItems = 7;
 
 export const contentLimit = 4;
 

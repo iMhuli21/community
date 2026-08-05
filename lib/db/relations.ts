@@ -83,6 +83,14 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.member.id,
       to: r.message.memberId,
     }),
+    likes: r.many.like({
+      from: r.member.id,
+      to: r.like.memberId,
+    }),
+    comments: r.many.comment({
+      from: r.member.id,
+      to: r.comment.memberId,
+    }),
   },
 
   message: {
@@ -93,6 +101,46 @@ export const relations = defineRelations(schema, (r) => ({
     group: r.one.group({
       from: r.message.groupId,
       to: r.group.id,
+    }),
+    likes: r.many.like({
+      from: r.message.id,
+      to: r.like.messageId,
+    }),
+    comments: r.many.comment({
+      from: r.message.id,
+      to: r.comment.messageId,
+    }),
+    messageAttachments: r.many.messageAttachments({
+      from: r.message.id,
+      to: r.messageAttachments.messageId,
+    }),
+  },
+
+  messageAttachments: {
+    message: r.one.message({
+      from: r.messageAttachments.messageId,
+      to: r.message.id,
+    }),
+  },
+
+  like: {
+    member: r.one.member({
+      from: r.like.memberId,
+      to: r.member.id,
+    }),
+    message: r.one.message({
+      from: r.like.messageId,
+      to: r.message.id,
+    }),
+  },
+  comment: {
+    member: r.one.member({
+      from: r.comment.memberId,
+      to: r.member.id,
+    }),
+    message: r.one.message({
+      from: r.comment.messageId,
+      to: r.message.id,
     }),
   },
 }));

@@ -10,6 +10,7 @@ import {
   index,
   uniqueIndex,
   unique,
+  integer,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -21,6 +22,7 @@ export const messageType = pgEnum("message_type", [
   "announcement",
   "normal",
 ]);
+export const statusType = pgEnum("status_type", ["resolved", "none"]);
 
 export const accountInNeonAuth = neonAuth.table(
   "account",
@@ -283,12 +285,15 @@ export const message = pgTable(
       .default(sql`now()`)
       .notNull(),
     type: messageType("type").default("normal").notNull(),
+    isUrgent: boolean("is_urgent").notNull().default(false),
+    status: statusType("status").default("none").notNull(),
     memberId: uuid("member_id")
       .notNull()
       .references(() => member.id, { onDelete: "cascade" }),
     groupId: uuid("group_id")
       .notNull()
       .references(() => group.id, { onDelete: "cascade" }),
+    flag: boolean("flag").default(false).notNull(),
   },
   (table) => [
     index("message_member_id_idx").using(
@@ -298,6 +303,80 @@ export const message = pgTable(
     index("message_groupId_idx").using(
       "btree",
       table.groupId.asc().nullsLast(),
+    ),
+  ],
+);
+
+export const messageAttachments = pgTable(
+  "message_attachments",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    fileName: text("file_name").notNull(),
+    fileKey: text("file_key").notNull(),
+    fileSize: integer("file_size").notNull(),
+    fileType: text("file_type").notNull(),
+    fileUrl: text("file_url").notNull(),
+    messageId: uuid("message_id").references(() => message.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => [
+    index("message_attachments_messageId_idx").using(
+      "btree",
+      table.messageId.asc().nullsLast(),
+    ),
+  ],
+);
+
+export const like = pgTable(
+  "like",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    messageId: uuid("message_id")
+      .notNull()
+      .references(() => message.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`now()`),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("like_message_id_idx").using(
+      "btree",
+      table.messageId.asc().nullsLast(),
+    ),
+    index("like_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
+    ),
+  ],
+);
+
+export const comment = pgTable(
+  "comment",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    body: text("body").notNull(),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`now()`),
+    messageId: uuid("message_id")
+      .notNull()
+      .references(() => message.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("comment_message_id_idx").using(
+      "btree",
+      table.messageId.asc().nullsLast(),
+    ),
+    index("comment_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
     ),
   ],
 );

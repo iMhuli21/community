@@ -35,8 +35,8 @@ export function NavSecondary() {
       </SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          {data?.data ? (
-            data.data.map((info) => (
+          {data ? (
+            data.map((info) => (
               <SidebarMenuItem key={info.group?.id}>
                 <SidebarMenuButton asChild>
                   <Link href={`/group/${info.group?.id}`}>
@@ -54,7 +54,7 @@ export function NavSecondary() {
               You haven&apos;t created any communities yet.
             </p>
           )}
-          {data?.data && data.data.length === 0 && (
+          {data && data.length === 0 && (
             <p className="opacity-50 text-xs w-40 ml-2">
               You haven&apos;t created any communities yet.
             </p>

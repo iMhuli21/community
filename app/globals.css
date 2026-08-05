@@ -106,6 +106,9 @@
   --blue: #1a3a6b;
   --blue-light: #e8eef8;
   --muted-f: #6b6b6b;
+  --red: #991b1b;
+  --red-mid: #fecaca;
+  --red-light: #f7f5f0;
 }
 
 .dark {

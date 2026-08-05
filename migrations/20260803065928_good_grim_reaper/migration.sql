@@ -1,0 +1,1 @@
+ALTER TABLE "message" ADD COLUMN "flag" boolean DEFAULT false NOT NULL;

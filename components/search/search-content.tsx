@@ -41,7 +41,7 @@ export default function SearchContent() {
         />
         {debouncedQuery.trim().length > 0 && (
           <span className="text-sm font-semibold text-ink">
-            {data?.data && data.data.length} results{" "}
+            {data && data.length} results{" "}
             <span className="font-normal">
               for &quot;{debouncedQuery}&quot;
             </span>
@@ -52,8 +52,7 @@ export default function SearchContent() {
         <Badge className="h-7 rounded-2xl">Near me</Badge>
       </div> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
-        {data?.data &&
-          data.data.map((group) => <GroupCard key={group.id} info={group} />)}
+        {data && data.map((group) => <GroupCard key={group.id} info={group} />)}
       </div>
       <div className="w-75 p-5 border border-line bg-c-bg flex flex-col items-center justify-center rounded-lg gap-2">
         <span className="font-medium">Don&apos;t see your area?</span>
