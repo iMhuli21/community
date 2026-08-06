@@ -39,3 +39,21 @@ export function getRandomPaletteColor() {
 
 export const toDate = (value: string | Date) =>
   typeof value === "string" ? parseISO(value) : value;
+
+export async function downloadFile(fileUrl: string, name: string) {
+  const res = await fetch(fileUrl);
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const toggleDownload = document.createElement("a");
+
+  toggleDownload.href = url;
+  toggleDownload.download = name;
+  document.body.appendChild(toggleDownload);
+  toggleDownload.click();
+
+  toggleDownload.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+}

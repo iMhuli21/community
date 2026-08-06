@@ -16,22 +16,13 @@ export async function deleteMessageFn(messageId: string) {
     throw new Error("Invalid data sent.");
   }
 
-  //member
-  const findMember = await db.query.member.findFirst({
-    where: {
-      userId: session.user.id,
-    },
-  });
-
-  if (!findMember) {
-    throw new Error("You are haven't joined this group yet.");
-  }
-
   //check if they sent the message
   const findMessage = await db.query.message.findFirst({
     where: {
       id: messageId,
-      memberId: findMember.id,
+      member: {
+        userId: session.user.id,
+      },
     },
   });
 

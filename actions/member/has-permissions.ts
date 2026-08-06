@@ -3,14 +3,14 @@
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
 
-export async function hasPermissionFn(groupId: string) {
+export async function hasPermissionFn(groupId?: string) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user?.id) {
     throw new Error("User not logged in.");
   }
 
-  if (groupId.trim().length === 0) {
+  if (groupId?.trim().length === 0) {
     throw new Error("Invalid data sent.");
   }
 

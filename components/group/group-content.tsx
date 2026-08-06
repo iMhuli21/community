@@ -14,35 +14,25 @@ export default function GroupContent({ id }: { id: string }) {
     queryKey: ["group", id],
     queryFn: () => getGroupFn(id),
   });
-  const hasPermissions = useQuery({
-    queryKey: ["permissions", id],
-    queryFn: () => hasPermissionFn(id),
-  });
 
   if (groupInfo.isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (groupInfo?.error || hasPermissions?.error) {
+  if (groupInfo?.error) {
     toast.info("Info", {
-      description: groupInfo.error?.message || hasPermissions.error?.message,
+      description: groupInfo.error?.message,
     });
 
-    return (
-      <ErrorMessage
-        message={groupInfo.error?.message || hasPermissions.error?.message}
-      />
-    );
+    return <ErrorMessage message={groupInfo.error?.message} />;
   }
 
   return (
     <main>
       {groupInfo?.data && <GroupContentHeader data={groupInfo?.data} />}
       <CreateMessage groupId={id} />
-      <section className="bg-c-bg p-5">
-        {hasPermissions?.data && (
-          <Messages groupId={id} permissions={hasPermissions.data} />
-        )}
+      <section className="bg-c-bg p-5 min-h-dvh">
+        <Messages groupId={id} />
       </section>
     </main>
   );

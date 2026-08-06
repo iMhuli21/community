@@ -87,9 +87,17 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.member.id,
       to: r.like.memberId,
     }),
+    commentLikes: r.many.likeComment({
+      from: r.member.id,
+      to: r.likeComment.memberId,
+    }),
     comments: r.many.comment({
       from: r.member.id,
       to: r.comment.memberId,
+    }),
+    replies: r.many.reply({
+      from: r.member.id,
+      to: r.reply.memberId,
     }),
   },
 
@@ -141,6 +149,34 @@ export const relations = defineRelations(schema, (r) => ({
     message: r.one.message({
       from: r.comment.messageId,
       to: r.message.id,
+    }),
+    replies: r.many.reply({
+      from: r.comment.id,
+      to: r.reply.commentId,
+    }),
+    likes: r.many.likeComment({
+      from: r.comment.id,
+      to: r.likeComment.commentId,
+    }),
+  },
+  reply: {
+    member: r.one.member({
+      from: r.reply.memberId,
+      to: r.member.id,
+    }),
+    comment: r.one.comment({
+      from: r.reply.commentId,
+      to: r.comment.id,
+    }),
+  },
+  likeComment: {
+    member: r.one.member({
+      from: r.likeComment.memberId,
+      to: r.member.id,
+    }),
+    comment: r.one.comment({
+      from: r.likeComment.commentId,
+      to: r.comment.id,
     }),
   },
 }));

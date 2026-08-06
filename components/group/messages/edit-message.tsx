@@ -34,7 +34,7 @@ export default function EditMessage({ messageId }: { messageId: string }) {
 
   const { data: message, isLoading: messageLoading } = useQuery({
     queryKey: ["message", messageId],
-    queryFn: () => getMessageFn(messageId),
+    queryFn: () => getMessageFn({ messageId }),
   });
 
   const [activeToggle, setActiveToggle] = useState<MessageType>(
@@ -89,27 +89,28 @@ export default function EditMessage({ messageId }: { messageId: string }) {
   });
 
   const handleUpdateMessage = async (values: CreateMessageSchema) => {
-    const res = await messageMutation.mutateAsync({
-      data: values,
-      toggle: activeToggle,
-      files: uploadedFiles,
-      messageId,
-    });
-
-    if (messageMutation.error) {
-      return toast.error("Error", {
-        description: messageMutation.error?.message,
+    try {
+      const res = await messageMutation.mutateAsync({
+        data: values,
+        toggle: activeToggle,
+        files: uploadedFiles,
+        messageId,
       });
-    }
-    if (res?.success) {
-      //remove the text after sending the message
-      await queryClient.invalidateQueries({ queryKey: ["group-messages"] });
-      reset({ message: "" });
-      setUploadedFiles([]);
-      setActiveToggle("normal");
 
-      return toast.success("Success", {
-        description: res.success,
+      if (res?.success) {
+        //remove the text after sending the message
+        await queryClient.invalidateQueries({ queryKey: ["group-messages"] });
+        reset({ message: "" });
+        setUploadedFiles([]);
+        setActiveToggle("normal");
+
+        return toast.success("Success", {
+          description: res.success,
+        });
+      }
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
       });
     }
   };

@@ -121,36 +121,37 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
   });
 
   const handleSendMessage = async (values: CreateMessageSchema) => {
-    const res = await messageMutation.mutateAsync({
-      values,
-      groupId,
-      messageType: activeToggle,
-      images: uploadedImages,
-      docs: uploadedDocs,
-    });
-
-    if (messageMutation.error) {
-      return toast.error("Error", {
-        description: messageMutation.error?.message,
+    try {
+      const res = await messageMutation.mutateAsync({
+        values,
+        groupId,
+        messageType: activeToggle,
+        images: uploadedImages,
+        docs: uploadedDocs,
       });
-    }
-    if (res?.success) {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["group-messages", groupId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["group", groupId],
-        }),
-      ]);
-      //remove the text after sending the message
-      reset({ message: "" });
-      setUploadedImages([]);
-      setUploadedDocs([]);
-      setActiveToggle("normal");
 
-      return toast.success("Success", {
-        description: res.success,
+      if (res?.success) {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: ["group-messages", groupId],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["group", groupId],
+          }),
+        ]);
+        //remove the text after sending the message
+        reset({ message: "" });
+        setUploadedImages([]);
+        setUploadedDocs([]);
+        setActiveToggle("normal");
+
+        return toast.success("Success", {
+          description: res.success,
+        });
+      }
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
       });
     }
   };
@@ -161,7 +162,7 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
 
   return (
     <form
-      className="py-4 px-5 flex items-start gap-4"
+      className="py-4 px-5 flex items-start gap-4 bg-white"
       onSubmit={handleSubmit(handleSendMessage)}
     >
       <Avatar>

@@ -10,13 +10,10 @@ import { useInView } from "react-intersection-observer";
 import { Loader2Icon } from "lucide-react";
 
 interface Props {
-  permissions: {
-    status: boolean;
-  };
   groupId: string;
 }
 
-export default function Messages({ groupId, permissions }: Props) {
+export default function Messages({ groupId }: Props) {
   const { inView, ref } = useInView({
     threshold: 0,
     rootMargin: "200px",
@@ -50,14 +47,16 @@ export default function Messages({ groupId, permissions }: Props) {
         {data &&
           data.pages.map((page) =>
             page.messages.map((message) => (
-              <Message
-                key={message.id}
-                message={message}
-                permissions={permissions.status}
-              />
+              <Message key={message.id} message={message} />
             )),
           )}
       </div>
+      {data?.pages[0].messages.length === 0 && (
+        <div className="flex items-center justify-center text-sm font-semibold min-h-dvh">
+          No messages...
+        </div>
+      )}
+
       <div ref={ref}>
         {isFetchingNextPage && (
           <div className="flex items-center gap-1 text-sm tracking-tight">

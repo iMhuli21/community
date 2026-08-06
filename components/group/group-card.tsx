@@ -72,13 +72,17 @@ export default function GroupCard({ info }: Props) {
   }, [info, session]);
 
   const handleJoinGroup = async () => {
-    const res = await mutation.mutateAsync(info.id);
+    try {
+      const res = await mutation.mutateAsync(info.id);
 
-    if (mutation.error) {
-      return toast.error("Error", { description: mutation.error?.message });
-    } else if (res?.success) {
-      toast.success("Success", {
-        description: res.success,
+      if (res?.success) {
+        toast.success("Success", {
+          description: res.success,
+        });
+      }
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
       });
     }
   };

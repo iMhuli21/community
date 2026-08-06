@@ -64,6 +64,7 @@ export async function getGroupMessagesFn({
             columns: {
               status: true,
               name: true,
+              userId: true,
             },
           },
         },

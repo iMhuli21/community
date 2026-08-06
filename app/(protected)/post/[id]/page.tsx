@@ -1,4 +1,5 @@
-import GroupContent from "@/components/group/group-content";
+import BackBtn from "@/components/back-btn";
+import PostContent from "@/components/post/post-content";
 
 interface Props {
   params: Promise<{
@@ -11,5 +12,9 @@ export const dynamic = "force-dynamic";
 export default async function page({ params }: Props) {
   const { id } = await params;
 
-  return <GroupContent id={id} />;
+  return (
+    <div>
+      <PostContent id={id} />
+    </div>
+  );
 }

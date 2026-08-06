@@ -354,6 +354,32 @@ export const like = pgTable(
   ],
 );
 
+export const likeComment = pgTable(
+  "like_comment",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    commentId: uuid("comment_id")
+      .notNull()
+      .references(() => message.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`now()`),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("like_comment_id_idx").using(
+      "btree",
+      table.commentId.asc().nullsLast(),
+    ),
+    index("like_comment_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
+    ),
+  ],
+);
+
 export const comment = pgTable(
   "comment",
   {
@@ -375,6 +401,33 @@ export const comment = pgTable(
       table.messageId.asc().nullsLast(),
     ),
     index("comment_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
+    ),
+  ],
+);
+
+export const reply = pgTable(
+  "reply",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    body: text("body").notNull(),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`now()`),
+    commentId: uuid("comment_id")
+      .notNull()
+      .references(() => message.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("reply_comment_id_idx").using(
+      "btree",
+      table.commentId.asc().nullsLast(),
+    ),
+    index("reply_member_id_idx").using(
       "btree",
       table.memberId.asc().nullsLast(),
     ),

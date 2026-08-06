@@ -76,6 +76,28 @@ export type Message = {
     member: {
       name: string;
       status: "Mod" | "Admin" | "Member";
+      userId: string;
+    } | null;
+  }[];
+};
+
+export type Comment = {
+  id: string;
+  body: string;
+  createdAt: Date;
+  memberId: string;
+  messageId: string;
+  member: {
+    name: string;
+    status: "Mod" | "Admin" | "Member";
+  } | null;
+  likes?: {
+    id: string;
+    createdAt: Date;
+    memberId: string;
+    commentId: string;
+    member: {
+      userId: string;
     } | null;
   }[];
 };

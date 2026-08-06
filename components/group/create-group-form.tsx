@@ -60,16 +60,19 @@ export default function CreateGroupForm() {
   } = form;
 
   const handleCreateGroup = async (values: CreateGroupSchema) => {
-    const res = await mutation.mutateAsync(values);
+    try {
+      const res = await mutation.mutateAsync(values);
 
-    if (mutation.error) {
-      return toast.error("Error", { description: mutation.error?.message });
-    } else if (res?.success) {
-      toast.success("Success", {
-        description: res.success,
+      if (res?.success) {
+        toast.success("Success", {
+          description: res.success,
+        });
+        route.push("/home");
+      }
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
       });
-
-      route.push("/home");
     }
   };
 

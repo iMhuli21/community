@@ -14,7 +14,13 @@ interface UpdateMessage {
   messageId: string;
 }
 
-export async function markMessageAsUrgentFn(messageId: string) {
+export async function markMessageAsUrgentFn({
+  messageId,
+  groupId,
+}: {
+  messageId: string;
+  groupId: string;
+}) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user?.id) {
@@ -29,6 +35,7 @@ export async function markMessageAsUrgentFn(messageId: string) {
   const hasPrivelleges = await db.query.member.findFirst({
     where: {
       userId: session.user.id,
+      groupId,
     },
   });
 
@@ -69,7 +76,13 @@ export async function markMessageAsUrgentFn(messageId: string) {
   };
 }
 
-export async function markMessageAsResolvedFn(messageId: string) {
+export async function markMessageAsResolvedFn({
+  messageId,
+  groupId,
+}: {
+  messageId: string;
+  groupId: string;
+}) {
   const { data: session } = await auth.getSession();
 
   if (!session?.user?.id) {
@@ -84,6 +97,7 @@ export async function markMessageAsResolvedFn(messageId: string) {
   const hasPrivelleges = await db.query.member.findFirst({
     where: {
       userId: session.user.id,
+      groupId,
     },
   });
 
