@@ -2,6 +2,7 @@
 
 import {
   CheckCircle2Icon,
+  FlagTriangleRightIcon,
   InfoIcon,
   MessageCircleIcon,
   Route,
@@ -49,6 +50,8 @@ import {
 import { deleteMessageFn } from "@/actions/message/delete-message";
 import BackBtn from "../back-btn";
 import { useRouter } from "next/navigation";
+import { flagMessageFn } from "@/actions/message/flag-message";
+import ReportDropdown from "../group/messages/report-dropdown";
 
 export default function PostContent({ id }: { id: string }) {
   const { data: session } = useQuery({
@@ -613,11 +616,18 @@ export default function PostContent({ id }: { id: string }) {
                 <span>Mark as Urgent</span>
               </button>
             )}
-          </div>
-          {hasPermissions.data?.status === false &&
-            post?.member?.userId !== session?.data?.user.id && (
-              <div className="text-xs font-medium">No actions available...</div>
+            {post && (
+              <ReportDropdown
+                disabled={
+                  deleteMessageMutation.isPending ||
+                  resolveMessageMutation.isPending ||
+                  urgentMessageMutation.isPending
+                }
+                groupId={post.groupId}
+                messageId={post.id}
+              />
             )}
+          </div>
         </div>
       </div>
     </div>

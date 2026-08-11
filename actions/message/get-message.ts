@@ -20,6 +20,7 @@ export async function getMessageFn({ messageId }: { messageId: string }) {
   const message = await db.query.message.findFirst({
     where: {
       id: messageId,
+      isReported: false,
     },
     with: {
       likes: {

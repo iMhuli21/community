@@ -4,10 +4,12 @@ import {
   createCommentSchema,
   createGroupFormSchema,
   createMessageSchema,
+  createReasonSchema,
   signInFormSchema,
   signUpFormSchema,
 } from "./zod-schema";
 import {
+  appealType,
   group,
   member,
   message,
@@ -21,6 +23,7 @@ export type SignInFormSchema = z.infer<typeof signInFormSchema>;
 export type CreateGroupSchema = z.infer<typeof createGroupFormSchema>;
 export type CreateMessageSchema = z.infer<typeof createMessageSchema>;
 export type CreateCommentSchema = z.infer<typeof createCommentSchema>;
+export type CreateReasonSchema = z.infer<typeof createReasonSchema>;
 
 export type Route = {
   href: string;
@@ -105,6 +108,7 @@ export type Comment = {
 export type MessageType = (typeof messageType.enumValues)[number];
 
 export type StatusType = (typeof statusType.enumValues)[number];
+export type AppealStatusType = (typeof appealType.enumValues)[number];
 
 export type UploadDocsType = {
   key: string;

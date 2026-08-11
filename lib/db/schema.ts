@@ -23,6 +23,7 @@ export const messageType = pgEnum("message_type", [
   "normal",
 ]);
 export const statusType = pgEnum("status_type", ["resolved", "none"]);
+export const appealType = pgEnum("status", ["rejected", "success", "pending"]);
 
 export const accountInNeonAuth = neonAuth.table(
   "account",
@@ -293,7 +294,7 @@ export const message = pgTable(
     groupId: uuid("group_id")
       .notNull()
       .references(() => group.id, { onDelete: "cascade" }),
-    flag: boolean("flag").default(false).notNull(),
+    isReported: boolean("is_reported").default(false).notNull(),
   },
   (table) => [
     index("message_member_id_idx").using(
@@ -303,6 +304,71 @@ export const message = pgTable(
     index("message_groupId_idx").using(
       "btree",
       table.groupId.asc().nullsLast(),
+    ),
+  ],
+);
+
+export const report = pgTable(
+  "report",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    flag: boolean("flag").default(true).notNull(),
+    reason: text("reason").notNull(),
+    messageId: uuid("message_id")
+      .notNull()
+      .references(() => message.id, { onDelete: "cascade" }),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => group.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("report_message_id_idx").using(
+      "btree",
+      table.messageId.asc().nullsLast(),
+    ),
+    index("report_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
+    ),
+    index("report_group_id_idx").using(
+      "btree",
+      table.groupId.asc().nullsLast(),
+    ),
+  ],
+);
+
+export const appeal = pgTable(
+  "appeals",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    reportId: uuid("report_id")
+      .notNull()
+      .references(() => report.id, {
+        onDelete: "cascade",
+      }),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+    reasoning: text("reasoning"),
+    status: appealType("status").notNull().default("pending"),
+    createdAt: timestamp("created_at")
+      .default(sql`now()`)
+      .notNull(),
+  },
+  (table) => [
+    index("appeal_report_id_idx").using(
+      "btree",
+      table.reportId.asc().nullsLast(),
+    ),
+    index("appeal_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
     ),
   ],
 );

@@ -1,5 +1,6 @@
 import { defineRelations } from "drizzle-orm";
 import * as schema from "./schema";
+import { report } from "process";
 
 export const relations = defineRelations(schema, (r) => ({
   accountInNeonAuth: {
@@ -68,12 +69,24 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.group.id,
       to: r.message.groupId,
     }),
+    reports: r.many.report({
+      from: r.group.id,
+      to: r.report.groupId,
+    }),
   },
 
   member: {
     group: r.one.group({
       from: r.member.groupId,
       to: r.group.id,
+    }),
+    reports: r.many.report({
+      from: r.member.id,
+      to: r.report.memberId,
+    }),
+    appeals: r.many.appeal({
+      from: r.member.id,
+      to: r.appeal.memberId,
     }),
     user: r.one.user({
       from: r.member.userId,
@@ -121,6 +134,10 @@ export const relations = defineRelations(schema, (r) => ({
     messageAttachments: r.many.messageAttachments({
       from: r.message.id,
       to: r.messageAttachments.messageId,
+    }),
+    report: r.one.report({
+      from: r.message.id,
+      to: r.report.messageId,
     }),
   },
 
@@ -177,6 +194,31 @@ export const relations = defineRelations(schema, (r) => ({
     comment: r.one.comment({
       from: r.likeComment.commentId,
       to: r.comment.id,
+    }),
+  },
+
+  report: {
+    message: r.one.message({
+      from: r.report.messageId,
+      to: r.message.id,
+    }),
+    member: r.one.member({
+      from: r.report.id,
+      to: r.member.id,
+    }),
+    group: r.one.group({
+      from: r.report.groupId,
+      to: r.group.id,
+    }),
+  },
+  appeal: {
+    report: r.one.report({
+      from: r.appeal.reportId,
+      to: r.report.id,
+    }),
+    member: r.one.member({
+      from: r.appeal.memberId,
+      to: r.member.id,
     }),
   },
 }));

@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/server";
 import { maxItems } from "@/lib/constants";
 import { db } from "@/lib/db/db";
 import { comment } from "@/lib/db/schema";
-import { eq, lt } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export async function getGroupMessagesFn({
   groupId,
@@ -22,7 +22,6 @@ export async function getGroupMessagesFn({
   if (!groupId.trim()) {
     throw new Error("Invalid data sent.");
   }
-
   //get messages
   const messages = await db.query.message.findMany({
     where: {
@@ -30,6 +29,7 @@ export async function getGroupMessagesFn({
       createdAt: {
         lt: cursor ? new Date(cursor) : undefined,
       },
+      isReported: false,
     },
     with: {
       member: {
@@ -53,6 +53,7 @@ export async function getGroupMessagesFn({
         },
       },
       messageAttachments: true,
+      report: true,
 
       comments: {
         limit: 2,

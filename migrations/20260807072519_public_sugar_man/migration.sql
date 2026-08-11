@@ -1,0 +1,1 @@
+ALTER TABLE "appeal" RENAME TO "appeals";

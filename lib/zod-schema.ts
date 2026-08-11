@@ -47,3 +47,10 @@ export const createCommentSchema = z.object({
     .min(1, { error: "Message cannot be less than 1 character." })
     .max(1000, { error: "Content cannot be more than 1000 characters." }),
 });
+
+export const createReasonSchema = z.object({
+  reason: z
+    .string()
+    .min(1, { error: "Reason cannot be less than 1 character." })
+    .max(500, { error: "Reason cannot be more than 500 characters." }),
+});
