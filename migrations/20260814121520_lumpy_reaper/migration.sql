@@ -1,0 +1,1 @@
+ALTER TABLE "decision" ADD COLUMN "reasoning" text NOT NULL;

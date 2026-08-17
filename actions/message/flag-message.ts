@@ -2,9 +2,9 @@
 
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
-import { message, report } from "@/lib/db/schema";
+import { message, report, reportType } from "@/lib/db/schema";
 import { CreateReasonSchema } from "@/lib/types";
-import { createReasonSchema } from "@/lib/zod-schema";
+import { categories, createReasonSchema } from "@/lib/zod-schema";
 import { eq } from "drizzle-orm";
 
 export async function flagMessageFn({
@@ -32,10 +32,11 @@ export async function flagMessageFn({
     throw new Error("Invalid data sent.");
   }
 
-  //find member
+  //check if the person flagging the message is a member of the group
   const findMember = await db.query.member.findFirst({
     where: {
       userId: session.user.id,
+      groupId,
     },
     columns: {
       id: true,
@@ -65,7 +66,7 @@ export async function flagMessageFn({
 
   const flagMessage = await db.insert(report).values({
     memberId: findMember.id,
-    reason,
+    reason: reason as (typeof reportType.enumValues)[number],
     messageId: findMessage.id,
     groupId,
   });
@@ -74,7 +75,7 @@ export async function flagMessageFn({
     throw new Error("Something went wrong.");
   }
 
-  //update the message
+  //mark the message
   const updatedMessage = await db
     .update(message)
     .set({

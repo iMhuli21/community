@@ -4,16 +4,24 @@ import {
   createCommentSchema,
   createGroupFormSchema,
   createMessageSchema,
+  createReasoningSchema,
   createReasonSchema,
+  editEmailSchema,
+  editPasswordSchema,
+  editProfileSchema,
   signInFormSchema,
   signUpFormSchema,
 } from "./zod-schema";
 import {
-  appealType,
+  appeal,
+  decision,
+  decisionType,
   group,
   member,
   message,
   messageType,
+  report,
+  reportType,
   statusType,
   user,
 } from "./db/schema";
@@ -24,6 +32,10 @@ export type CreateGroupSchema = z.infer<typeof createGroupFormSchema>;
 export type CreateMessageSchema = z.infer<typeof createMessageSchema>;
 export type CreateCommentSchema = z.infer<typeof createCommentSchema>;
 export type CreateReasonSchema = z.infer<typeof createReasonSchema>;
+export type EditProfileSchema = z.infer<typeof editProfileSchema>;
+export type EditPasswordSchema = z.infer<typeof editPasswordSchema>;
+export type EditEmailSchema = z.infer<typeof editEmailSchema>;
+export type CreateReasoningSchema = z.infer<typeof createReasoningSchema>;
 
 export type Route = {
   href: string;
@@ -37,7 +49,10 @@ export type RouteIcon = {
 //db
 export type User = typeof user.$inferSelect;
 export type Group = typeof group.$inferSelect;
+export type Report = typeof report.$inferSelect;
+export type Appeal = typeof appeal.$inferSelect;
 export type Member = typeof member.$inferSelect;
+export type Decision = typeof decision.$inferSelect;
 export type Message = {
   body: string;
   id: string;
@@ -108,7 +123,8 @@ export type Comment = {
 export type MessageType = (typeof messageType.enumValues)[number];
 
 export type StatusType = (typeof statusType.enumValues)[number];
-export type AppealStatusType = (typeof appealType.enumValues)[number];
+export type DecisionEnumType = (typeof decisionType.enumValues)[number];
+export type ReportType = (typeof reportType.enumValues)[number];
 
 export type UploadDocsType = {
   key: string;

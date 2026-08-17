@@ -1,0 +1,1 @@
+ALTER TABLE "group" DROP CONSTRAINT "unique_group_name";

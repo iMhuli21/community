@@ -23,8 +23,24 @@ export const messageType = pgEnum("message_type", [
   "normal",
 ]);
 export const statusType = pgEnum("status_type", ["resolved", "none"]);
-export const appealType = pgEnum("status", ["rejected", "success", "pending"]);
-
+export const decisionType = pgEnum("decision_type", ["dismiss", "uphold"]);
+export const reportType = pgEnum("report_type", [
+  "harassment_bullying",
+  "hate_speech",
+  "threats_violence",
+  "misinformation",
+  "spam_unwanted",
+  "scam_fraud",
+  "sexual_explicit",
+  "child_safety",
+  "self_harm",
+  "illegal",
+  "privacy_violation",
+  "impersonation",
+  "malicious",
+  "copyright",
+  "other",
+]);
 export const accountInNeonAuth = neonAuth.table(
   "account",
   {
@@ -226,7 +242,7 @@ export const group = pgTable(
     slug: text().notNull(),
     creatorId: text("creator_id")
       .notNull()
-      .references(() => user.userId, { onDelete: "cascade" }),
+      .references(() => user.userId),
     description: text().notNull(),
     suburbArea: text("suburb_area").notNull(),
     cityMunicipality: text("city_municipality").notNull(),
@@ -312,8 +328,7 @@ export const report = pgTable(
   "report",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    flag: boolean("flag").default(true).notNull(),
-    reason: text("reason").notNull(),
+    reason: reportType("reason").notNull(),
     messageId: uuid("message_id")
       .notNull()
       .references(() => message.id, { onDelete: "cascade" }),
@@ -355,8 +370,7 @@ export const appeal = pgTable(
     memberId: uuid("member_id")
       .notNull()
       .references(() => member.id, { onDelete: "cascade" }),
-    reasoning: text("reasoning"),
-    status: appealType("status").notNull().default("pending"),
+    reasoning: text("reasoning").notNull(),
     createdAt: timestamp("created_at")
       .default(sql`now()`)
       .notNull(),
@@ -370,6 +384,35 @@ export const appeal = pgTable(
       "btree",
       table.memberId.asc().nullsLast(),
     ),
+  ],
+);
+
+export const decision = pgTable(
+  "decision",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    reportId: uuid("report_id")
+      .notNull()
+      .references(() => report.id, { onDelete: "cascade" }),
+    reasoning: text("reasoning").notNull(),
+    status: decisionType("status").notNull(),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => member.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt")
+      .notNull()
+      .default(sql`now()`),
+  },
+  (table) => [
+    index("decision_report_id_idx").using(
+      "btree",
+      table.reportId.asc().nullsLast(),
+    ),
+    index("decision_member_id_idx").using(
+      "btree",
+      table.memberId.asc().nullsLast(),
+    ),
+    unique("unique_report_id").on(table.reportId),
   ],
 );
 

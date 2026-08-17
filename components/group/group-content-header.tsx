@@ -9,10 +9,12 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";
 import { getGroupStatsFn } from "@/actions/group/get-group-stats";
 import ErrorMessage from "../error-message";
+import { joinGroupFn } from "@/actions/group/join-group";
+import { toast } from "sonner";
 
 interface Props {
   data: {
@@ -38,6 +40,8 @@ interface Props {
 }
 
 export default function GroupContentHeader({ data }: Props) {
+  const queryClient = useQueryClient();
+
   const { data: session } = useQuery({
     queryKey: ["client-auth"],
     queryFn: () => authClient.getSession(),
@@ -48,6 +52,48 @@ export default function GroupContentHeader({ data }: Props) {
       (member) => member.userId === session?.data?.user.id,
     );
   }, [data, session?.data]);
+
+  const joinMutation = useMutation({
+    mutationFn: joinGroupFn,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["limited-groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group-count"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["search-group"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["joined-groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group", data.id],
+        }),
+      ]);
+    },
+  });
+
+  const handleJoinGroup = async () => {
+    try {
+      const res = await joinMutation.mutateAsync(data.id);
+
+      if (res?.success) {
+        toast.success("Success", {
+          description: res.success,
+        });
+      }
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
+      });
+    }
+  };
   return (
     <div className="space-y-2 border-b border-line bg-white">
       <div className="bg-black text-white p-5 flex flex-col gap-3 w-full">
@@ -89,7 +135,10 @@ export default function GroupContentHeader({ data }: Props) {
                 Leave Group
               </Button>
             ) : (
-              <Button>
+              <Button
+                onClick={handleJoinGroup}
+                disabled={joinMutation.isPending}
+              >
                 <CheckIcon /> Join
               </Button>
             )}

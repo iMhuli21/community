@@ -1,11 +1,17 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import AppTitle from "./app-title";
 import NavAvatar from "../nav-avatar";
-import { auth } from "@/lib/auth/server";
+import { useQuery } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth/auth-client";
 
-export async function SiteHeader() {
-  const { data: session } = await auth.getSession();
+export function SiteHeader() {
+  const { data } = useQuery({
+    queryKey: ["client-auth"],
+    queryFn: () => authClient.getSession(),
+  });
 
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -17,7 +23,7 @@ export async function SiteHeader() {
         />
         <AppTitle />
         <div className="ml-auto flex items-center gap-2">
-          {session?.user.id && <NavAvatar name={session.user.name} />}
+          {data?.data?.user?.id && <NavAvatar name={data.data.user.name} />}
         </div>
       </div>
     </header>

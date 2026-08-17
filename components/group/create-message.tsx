@@ -82,6 +82,9 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
     onUploadProgress(p) {
       setProgress(p);
     },
+    onUploadBegin: () => {
+      setUploadStatus(true);
+    },
   });
   const { startUpload: uploadDocs } = useUploadThing("docUploader", {
     onClientUploadComplete: (res) => {
@@ -111,6 +114,9 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
     signal: controller?.signal,
     onUploadProgress(p) {
       setProgress(p);
+    },
+    onUploadBegin: () => {
+      setUploadStatus(true);
     },
   });
 
@@ -341,7 +347,7 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
           <Button
             className="pl-4 flex items-center gap-2"
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || uploadStatus}
           >
             <SendIcon className="size-3" /> Post
           </Button>

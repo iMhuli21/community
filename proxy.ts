@@ -23,5 +23,6 @@ export const config = {
     "/groups",
     "/group/:path*",
     "/search",
+    "/flags:path*",
   ],
 };

@@ -1,5 +1,22 @@
 import * as z from "zod";
-import { messageType } from "./db/schema";
+
+export const categories = [
+  "harassment_bullying",
+  "hate_speech",
+  "threats_violence",
+  "misinformation",
+  "spam_unwanted",
+  "scam_fraud",
+  "sexual_explicit",
+  "child_safety",
+  "self_harm",
+  "illegal",
+  "privacy_violation",
+  "impersonation",
+  "malicious",
+  "copyright",
+  "other",
+];
 
 export const signUpFormSchema = z.object({
   name: z
@@ -51,6 +68,26 @@ export const createCommentSchema = z.object({
 export const createReasonSchema = z.object({
   reason: z
     .string()
-    .min(1, { error: "Reason cannot be less than 1 character." })
+    .refine((val) => categories.includes(val), { error: "Invalid selection." }),
+});
+export const editProfileSchema = z.object({
+  name: z.string().min(1, { error: "Name cannot be less than 1 character." }),
+  location: z
+    .string()
+    .min(1, { error: "Location cannot be less than 1 character." }),
+});
+export const editEmailSchema = z.object({
+  email: z.email({ error: "Invalid email." }),
+});
+export const editPasswordSchema = z.object({
+  newPassword: z
+    .string({ error: "New Password is required." })
+    .min(8, { error: "New Password should atleast be 8 characters long." }),
+  oldPassword: z.string({ error: "Old Password is required." }),
+});
+export const createReasoningSchema = z.object({
+  reasoning: z
+    .string({ error: "Reason is required." })
+    .min(1, { error: "Reason cannot be less than 1 character" })
     .max(500, { error: "Reason cannot be more than 500 characters." }),
 });

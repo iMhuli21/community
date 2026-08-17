@@ -84,6 +84,10 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.member.id,
       to: r.report.memberId,
     }),
+    decisions: r.many.decision({
+      from: r.member.id,
+      to: r.decision.memberId,
+    }),
     appeals: r.many.appeal({
       from: r.member.id,
       to: r.appeal.memberId,
@@ -203,12 +207,20 @@ export const relations = defineRelations(schema, (r) => ({
       to: r.message.id,
     }),
     member: r.one.member({
-      from: r.report.id,
+      from: r.report.memberId,
       to: r.member.id,
     }),
     group: r.one.group({
       from: r.report.groupId,
       to: r.group.id,
+    }),
+    appeal: r.one.appeal({
+      from: r.report.id,
+      to: r.appeal.reportId,
+    }),
+    decision: r.one.decision({
+      from: r.report.id,
+      to: r.decision.reportId,
     }),
   },
   appeal: {
@@ -218,6 +230,17 @@ export const relations = defineRelations(schema, (r) => ({
     }),
     member: r.one.member({
       from: r.appeal.memberId,
+      to: r.member.id,
+    }),
+  },
+
+  decision: {
+    report: r.one.report({
+      from: r.decision.reportId,
+      to: r.report.id,
+    }),
+    member: r.one.member({
+      from: r.decision.memberId,
       to: r.member.id,
     }),
   },

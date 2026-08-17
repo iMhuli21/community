@@ -12,8 +12,21 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { flagCategories } from "@/lib/constants";
 import { CreateReasonSchema } from "@/lib/types";
 import { createReasonSchema } from "@/lib/zod-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,13 +67,19 @@ export default function ReportDropdown({
         queryClient.invalidateQueries({
           queryKey: ["group-messages"],
         }),
+        queryClient.invalidateQueries({
+          queryKey: ["mod-flags"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["user-flags"],
+        }),
       ]);
     },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     control,
     reset,
   } = form;
@@ -114,12 +133,23 @@ export default function ReportDropdown({
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="reason">Reason</FieldLabel>
-                <Textarea
-                  {...field}
-                  placeholder="Enter a reason..."
-                  name="reason"
-                  id="reason"
-                />
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select reason...." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {flagCategories.map((flag) => (
+                      <div
+                        key={flag.value}
+                        className="flex flex-col items-start gap-0 p-2"
+                      >
+                        <SelectItem value={flag.value}>{flag.label}</SelectItem>
+                        <p className="text-xs opacity-50">{flag.description}</p>
+                      </div>
+                    ))}
+                  </SelectContent>
+                </Select>
+
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
