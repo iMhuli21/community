@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { fraunces } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Dot } from "lucide-react";
+import Link from "next/link";
 import { FaStar } from "react-icons/fa";
 
 export const dynamic = "force-dynamic";
@@ -38,12 +39,15 @@ export default function LandingPage() {
             &mdash; no middleman required.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Button size={"lg"}>Find my community</Button>
+            <Button size={"lg"} asChild>
+              <Link href="/search">Find my community</Link>
+            </Button>
             <Button
               size={"lg"}
+              asChild
               className="bg-inherit border border-line text-ink hover:bg-inherit hover:border-black"
             >
-              Create a community group
+              <Link href="/group/create">Create a community group</Link>
             </Button>
           </div>
           <div className="flex items-center text-sm text-muted-foreground font-light tracking-tight gap-0.5 text-center">
@@ -583,8 +587,12 @@ export default function LandingPage() {
             neighbourhood a place that works for everyone who lives there.
           </p>
           <div className="flex items-center gap-3">
-            <Button>Find my community</Button>
-            <Button variant="outline">Create a group</Button>
+            <Button asChild>
+              <Link href="/search">Find my community</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href={"/group/create"}>Create a group</Link>
+            </Button>
           </div>
         </div>
       </section>
