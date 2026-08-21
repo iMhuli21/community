@@ -109,10 +109,12 @@ export default function Message({ message }: Props) {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`${host_name}/post/${message.id}`);
+      await navigator.clipboard.writeText(
+        `${process.env.NEXT_PUBLIC_HOST_NAME}/post/${message.id}`,
+      );
 
       toast.success("Success", {
-        description: "Successfully copied link to group",
+        description: "Successfully copied link to message",
       });
     } catch (e) {
       toast.error("Error", {

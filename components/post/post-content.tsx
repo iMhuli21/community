@@ -332,12 +332,28 @@ export default function PostContent({ id }: { id: string }) {
     return <div>Post not found..</div>;
   }
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `${process.env.NEXT_PUBLIC_HOST_NAME}/post/${post?.id}`,
+      );
+
+      toast.success("Success", {
+        description: "Successfully copied link to message",
+      });
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
+      });
+    }
+  };
+
   return (
     <div className="p-6 bg-c-bg space-y-3">
       {post?.groupId && (
         <BackBtn href={`/group/${encodeURIComponent(post?.groupId)}`} />
       )}
-      <div className="flex items-start gap-5 bg-c-bg min-h-dvh">
+      <div className="flex flex-col-reverse sm:flex-row items-start gap-5 bg-c-bg min-h-dvh">
         <div className="w-full ">
           <div className="w-full flex-1 border border-line p-8 flex flex-col items-start gap-4 rounded-t-lg bg-white ">
             <div className="flex items-center gap-4">
@@ -478,7 +494,10 @@ export default function PostContent({ id }: { id: string }) {
                 <MessageCircleIcon size={15} />
                 <span>{post?.commentsCount}</span>
               </button>
-              <button className="flex items-center gap-1 text-xs text-muted-foreground font-medium tracking-tight bg-muted px-3 py-1 border border-line rounded-sm transition-all duration-150 ease-linear cursor-pointer">
+              <button
+                className="flex items-center gap-1 text-xs text-muted-foreground font-medium tracking-tight bg-muted px-3 py-1 border border-line rounded-sm transition-all duration-150 ease-linear cursor-pointer"
+                onClick={handleCopy}
+              >
                 <Share2Icon size={15} />
                 <span>Share</span>
               </button>

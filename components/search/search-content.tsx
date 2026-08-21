@@ -51,7 +51,7 @@ export default function SearchContent() {
       {/* <div>
         <Badge className="h-7 rounded-2xl">Near me</Badge>
       </div> */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 items-center">
         {data && data.map((group) => <GroupCard key={group.id} info={group} />)}
       </div>
       <div className="w-75 p-5 border border-line bg-c-bg flex flex-col items-center justify-center rounded-lg gap-2">

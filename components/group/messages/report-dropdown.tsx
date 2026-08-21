@@ -157,7 +157,7 @@ export default function ReportDropdown({
             )}
           />
 
-          <DialogFooter className="flex items-center gap-2">
+          <DialogFooter className="flex items-center gap-2 w-full">
             <DialogClose disabled={isSubmitting} asChild>
               <Button variant={"secondary"}>Cancel</Button>
             </DialogClose>

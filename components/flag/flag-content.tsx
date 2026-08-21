@@ -13,7 +13,7 @@ export default function FlagContent() {
 
   return (
     <div className="bg-c-bg p-6 min-h-dvh space-y-6">
-      <div className="flex items-center gap-5 justify-between w-full">
+      <div className="flex flex-col gap-3 items-start sm:flex-row sm:items-center sm:gap-5 sm:justify-between w-full">
         <div className="flex flex-col items-start gap-2">
           <h1
             className={cn(

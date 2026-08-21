@@ -241,8 +241,8 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
             ))}
           </div>
         )}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row gap-1 items-end sm:justify-between">
+          <div className="flex items-center flex-wrap gap-3">
             <ToggleGroup
               type="single"
               defaultValue={activeToggle}

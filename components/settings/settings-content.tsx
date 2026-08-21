@@ -107,8 +107,8 @@ export default function SettingsContent() {
   }
 
   return (
-    <div className="flex items-start gap-4 bg-c-bg w-full min-h-dvh p-6 justify-center">
-      <div className="w-50 p-2 space-y-4">
+    <div className="flex flex-col sm:flex-row items-start gap-4 bg-c-bg w-full min-h-dvh p-6 justify-center">
+      <div className="hidden sm:block max-w-50 w-full p-2 space-y-4">
         <ToggleGroup
           type="single"
           className="flex flex-col items-start gap-2"
@@ -145,10 +145,10 @@ export default function SettingsContent() {
           </div>
         </div>
       </div>
-      <div className="w-200 space-y-6">
+      <div className="w-full max-w-200 space-y-6">
         <div
           id="profile"
-          className="bg-white border border-line rounded-md w-200"
+          className="bg-white border border-line rounded-md w-full max-w-200"
           ref={profileRef}
         >
           <div className="border-b border-line p-4">
@@ -251,7 +251,7 @@ export default function SettingsContent() {
         </div>
         <div
           id="account&security"
-          className="bg-white border border-line rounded-md w-200"
+          className="bg-white border border-line rounded-md w-full max-w-200"
           ref={accountRef}
         >
           <div className="border-b border-line p-4">
@@ -295,7 +295,7 @@ export default function SettingsContent() {
         </div>
         <div
           id="danger"
-          className="bg-white border border-red-200 rounded-md w-200 relative overflow-hidden"
+          className="bg-white border border-red-200 rounded-md w-full max-w-200 relative overflow-hidden"
           ref={dangerRef}
         >
           <div className="flex items-center gap-2 text-red-800 bg-red-100/30 p-4 absolute top-0 left-0 w-full border-b border-red-200">
