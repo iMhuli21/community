@@ -25,6 +25,7 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import Comment from "../comment/comment";
 import Link from "next/link";
+import { host_name } from "@/lib/constants";
 
 interface Props {
   message: MessageType;
@@ -105,6 +106,20 @@ export default function Message({ message }: Props) {
       (like) => like.member?.userId === session?.data?.user.id,
     );
   }, [message]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${host_name}/post/${message.id}`);
+
+      toast.success("Success", {
+        description: "Successfully copied link to group",
+      });
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
+      });
+    }
+  };
 
   return (
     <Link href={`/post/${message.id}`}>
@@ -256,7 +271,10 @@ export default function Message({ message }: Props) {
                   <span>{message.commentsCount}</span>
                 </button>
               </div>
-              <button className="flex items-center gap-1 text-xs text-muted-foreground font-medium tracking-tight hover:bg-muted px-3 py-1 hover:border hover:border-line hover:rounded-sm transition-all duration-150 ease-linear cursor-pointer">
+              <button
+                className="flex items-center gap-1 text-xs text-muted-foreground font-medium tracking-tight hover:bg-muted px-3 py-1 hover:border hover:border-line hover:rounded-sm transition-all duration-150 ease-linear cursor-pointer"
+                onClick={handleCopy}
+              >
                 <Share2Icon size={15} />
                 <span>Share</span>
               </button>

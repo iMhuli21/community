@@ -22,6 +22,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import GroupDropDown from "./group-dropdown";
 import { hasPermissionFn } from "@/actions/member/has-permissions";
+import { host_name } from "@/lib/constants";
 
 interface Props {
   data: {
@@ -155,6 +156,20 @@ export default function GroupContentHeader({ data }: Props) {
     }
   };
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${host_name}/group/${data.id}`);
+
+      toast.success("Success", {
+        description: "Successfully copied link to group",
+      });
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
+      });
+    }
+  };
+
   return (
     <div className="space-y-2 border-b border-line bg-white">
       <div className="bg-black text-white p-5 flex flex-col gap-3 w-full">
@@ -184,6 +199,7 @@ export default function GroupContentHeader({ data }: Props) {
             <Button
               size={"sm"}
               className="px-3 flex items-center gap-3 bg-[rgba(255,255,255,.08)] border border-[rgba(255,255,255,.13)] text-white/80"
+              onClick={handleCopy}
             >
               <Share2Icon className="size-3" />
               Share
