@@ -47,7 +47,10 @@ export default function Poll({ poll }: Props) {
     queryFn: () => authClient.getSession(),
   });
 
-  const [option, setOption] = useState(poll.options[0]);
+  const [option, setOption] = useState(
+    poll.votes.find((vote) => vote.voter?.userId === data?.data?.user.id)
+      ?.vote ?? poll.options[0],
+  );
 
   const voteMutation = useMutation({
     mutationFn: voteFn,
@@ -57,15 +60,6 @@ export default function Poll({ poll }: Props) {
       });
     },
   });
-
-  useEffect(() => {
-    if (poll) {
-      setOption(
-        poll.votes.find((vote) => vote.voter?.userId === data?.data?.user.id)
-          ?.vote ?? poll.options[0],
-      );
-    }
-  }, [poll]);
 
   const handleVote = async () => {
     try {

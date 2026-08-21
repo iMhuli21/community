@@ -45,6 +45,7 @@ export type Route = {
 };
 
 export type RouteIcon = {
+  //@ts-ignore
   icon?: any;
 } & Route;
 

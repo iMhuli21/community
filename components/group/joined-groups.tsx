@@ -65,7 +65,6 @@ export default function JoinedGroupCard({ info }: Props) {
                   </span>
                 </div>
               </div>
-              {session?.user.id === info.group?.creatorId && <GroupDropDown />}
             </div>
             <p className="text-[0.78rem] text-muted-foreground w-full line-clamp-2">
               {info.group?.description}

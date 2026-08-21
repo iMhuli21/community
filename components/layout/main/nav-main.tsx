@@ -16,6 +16,7 @@ export function NavMain({
   items: {
     label: string;
     href: string;
+    //@ts-ignore
     icon?: any;
   }[];
 }) {

@@ -1,4 +1,3 @@
-import EditMessage from "@/components/group/messages/edit-message";
 import { ensureUserCreated } from "@/lib/db/function";
 
 interface Props {
@@ -6,6 +5,8 @@ interface Props {
     id: string;
   }>;
 }
+
+export const dynamic = "force-dynamic";
 
 export default async function page({ params }: Props) {
   const { id } = await params;

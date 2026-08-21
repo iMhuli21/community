@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { Dot } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 
+export const dynamic = "force-dynamic";
+
 export default function LandingPage() {
   return (
     <main className="bg-c-bg">
@@ -129,9 +131,9 @@ export default function LandingPage() {
                   <div className="post-type type-report">🚨 Report</div>
                 </div>
                 <div className="post-body">
-                  There's been no water in Khumalo Street since yesterday
-                  evening. Taps are completely dry. Anyone else affected? I've
-                  logged it with Joburg Water but no response yet.
+                  There&apos;s been no water in Khumalo Street since yesterday
+                  evening. Taps are completely dry. Anyone else affected?
+                  I&apos;ve logged it with Joburg Water but no response yet.
                 </div>
                 <div className="post-footer">
                   <button className="pf-action">👍 Support · 24</button>
@@ -265,7 +267,9 @@ export default function LandingPage() {
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <span className="text-xl block">📌</span>
-                <p className="text-lg font-medium">Posts don't disappear</p>
+                <p className="text-lg font-medium">
+                  Posts don&apos;t disappear
+                </p>
               </div>
               <p className="text-muted-foreground">
                 Issues, notices, and updates are permanently searchable. No more
@@ -293,8 +297,8 @@ export default function LandingPage() {
               </div>
               <p className="text-muted-foreground">
                 Reports are categorised, tracked, and marked resolved. Community
-                notices are pinned. It's not a chat &mdash; it's a community
-                record.
+                notices are pinned. It&apos;s not a chat &mdash; it&apos;s a
+                community record.
               </p>
               <div className="flex flex-wrap gap-1">
                 <span className="text-muted-foreground line-through">
@@ -314,9 +318,9 @@ export default function LandingPage() {
                 <p className="text-lg font-medium">Transparent moderation</p>
               </div>
               <p className="text-muted-foreground">
-                Moderators are visible and accountable. Anyone can see who's
-                running the group, what's been pinned, and why something was
-                removed.
+                Moderators are visible and accountable. Anyone can see
+                who&apos;s running the group, what&apos;s been pinned, and why
+                something was removed.
               </p>
               <div className="flex flex-wrap gap-1">
                 <span className="text-muted-foreground line-through">

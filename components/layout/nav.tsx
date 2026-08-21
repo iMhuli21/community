@@ -7,6 +7,8 @@ import NavAvatar from "./nav-avatar";
 import { auth } from "@/lib/auth/server";
 import { landingRoutes } from "@/lib/constants";
 
+export const dynamic = "force-dynamic";
+
 export default async function Navbar() {
   const { data: session } = await auth.getSession();
 

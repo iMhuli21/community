@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
-import { group, member } from "@/lib/db/schema";
+import { member } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function getGroupsFn(limit: number) {

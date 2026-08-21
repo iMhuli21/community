@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db/db";
 import { message, report, reportType } from "@/lib/db/schema";
 import { CreateReasonSchema } from "@/lib/types";
-import { categories, createReasonSchema } from "@/lib/zod-schema";
+import { createReasonSchema } from "@/lib/zod-schema";
 import { eq } from "drizzle-orm";
 
 export async function flagMessageFn({
