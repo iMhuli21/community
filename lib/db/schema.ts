@@ -542,3 +542,51 @@ export const reply = pgTable(
     ),
   ],
 );
+
+export const poll = pgTable(
+  "poll",
+  {
+    id: uuid("id").defaultRandom().primaryKey().notNull(),
+    title: text("title").notNull(),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`now()`),
+    closeDate: timestamp("close_date").notNull(),
+    votesCount: integer("votes_count").default(0),
+    creatorId: uuid("creator_id")
+      .notNull()
+      .references(() => member.id),
+    options: text("options").array().notNull(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => group.id),
+  },
+  (table) => [
+    index("poll_creator_id_idx").using(
+      "btree",
+      table.creatorId.asc().nullsLast(),
+    ),
+    index("poll_group_id_idx").using("btree", table.groupId.asc().nullsLast()),
+  ],
+);
+
+export const vote = pgTable(
+  "vote",
+  {
+    id: uuid("id").defaultRandom().primaryKey().notNull(),
+    vote: text("vote").notNull(),
+    createdAt: timestamp("createdAt")
+      .notNull()
+      .default(sql`now()`),
+    pollId: uuid("poll_id")
+      .notNull()
+      .references(() => poll.id),
+    voterId: uuid("voter_id")
+      .notNull()
+      .references(() => member.id),
+  },
+  (table) => [
+    index("vote_poll_id_idx").using("btree", table.pollId.asc().nullsLast()),
+    index("vote_voter_id_idx").using("btree", table.voterId.asc().nullsLast()),
+  ],
+);

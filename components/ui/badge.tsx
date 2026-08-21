@@ -22,7 +22,7 @@ const badgeVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         notice: "text-blue bg-blue-light hover:bg-blue-light/80",
         announcement: "text-amber bg-amber-light hover:bg-amber-light/80",
-        report: "text-destructive bg-destructive/10 hover:bg-destructive/80",
+        report: "text-red-800 bg-destructive/10 hover:bg-destructive/80",
         normal: "text-green bg-green-light hover:bg-green-light/80",
       },
       size: {

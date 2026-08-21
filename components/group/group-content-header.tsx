@@ -1,20 +1,20 @@
 "use client";
 
+import { toast } from "sonner";
+import { useMemo, useState } from "react";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { fraunces } from "@/lib/fonts";
-import { Badge } from "../ui/badge";
 import { cn, truncateWord } from "@/lib/utils";
-import { CheckIcon, PinIcon, Share2Icon } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { useMemo } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";
-import { getGroupStatsFn } from "@/actions/group/get-group-stats";
-import ErrorMessage from "../error-message";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { joinGroupFn } from "@/actions/group/join-group";
-import { toast } from "sonner";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import { leaveGroupFn } from "@/actions/group/leave-group";
+import { CheckIcon, PinIcon, Share2Icon } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   data: {
@@ -40,18 +40,20 @@ interface Props {
 }
 
 export default function GroupContentHeader({ data }: Props) {
+  const route = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const [activeToggle, setActiveToggle] = useState(
+    searchParams.get("filter") ?? "latest",
+  );
+
   const queryClient = useQueryClient();
 
   const { data: session } = useQuery({
     queryKey: ["client-auth"],
     queryFn: () => authClient.getSession(),
   });
-
-  const hasJoined = useMemo(() => {
-    return data.members.filter(
-      (member) => member.userId === session?.data?.user.id,
-    );
-  }, [data, session?.data]);
 
   const joinMutation = useMutation({
     mutationFn: joinGroupFn,
@@ -79,6 +81,35 @@ export default function GroupContentHeader({ data }: Props) {
     },
   });
 
+  const leaveMutation = useMutation({
+    mutationFn: leaveGroupFn,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["limited-groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group-count"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["search-group"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["joined-groups"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group", data.id],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["group-messages", data.id],
+        }),
+      ]);
+    },
+  });
+
   const handleJoinGroup = async () => {
     try {
       const res = await joinMutation.mutateAsync(data.id);
@@ -94,6 +125,23 @@ export default function GroupContentHeader({ data }: Props) {
       });
     }
   };
+
+  const handleLeaveGroup = async () => {
+    try {
+      const res = await leaveMutation.mutateAsync(data.id);
+
+      if (res?.success) {
+        toast.success("Success", {
+          description: res.success,
+        });
+      }
+    } catch (e) {
+      toast.error("Error", {
+        description: e instanceof Error ? e.message : "Unknown",
+      });
+    }
+  };
+
   return (
     <div className="space-y-2 border-b border-line bg-white">
       <div className="bg-black text-white p-5 flex flex-col gap-3 w-full">
@@ -127,8 +175,12 @@ export default function GroupContentHeader({ data }: Props) {
               <Share2Icon className="size-3" />
               Share
             </Button>
-            {hasJoined.length > 0 ? (
+            {data.members.filter(
+              (member) => member.userId === session?.data?.user.id,
+            ).length > 0 ? (
               <Button
+                onClick={handleLeaveGroup}
+                disabled={leaveMutation.isPending}
                 size="sm"
                 className="bg-[rgba(192,57,43,.15)] text-[#f87171] border border-[rgba(192,57,43,.3)] hover:bg-[rgba(192,57,43,.15)]/80 "
               >
@@ -163,7 +215,11 @@ export default function GroupContentHeader({ data }: Props) {
         </div>
       </div>
       <div className="px-5 py-2 flex items-center gap-4 justify-between">
-        <ToggleGroup type="single" defaultValue="latest">
+        <ToggleGroup
+          type="single"
+          defaultValue={activeToggle}
+          onValueChange={(val) => route.push(`/group/${data.id}?filter=${val}`)}
+        >
           <ToggleGroupItem
             size={"sm"}
             value="latest"
@@ -171,7 +227,20 @@ export default function GroupContentHeader({ data }: Props) {
           >
             Latest
           </ToggleGroupItem>
-
+          <ToggleGroupItem
+            size={"sm"}
+            value="announcement"
+            className="text-muted-foreground data-[state=on]:text-white data-[state=on]:bg-black h-7 rounded-sm tracking-tighter px-3"
+          >
+            Announcement
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            size={"sm"}
+            value="notice"
+            className="text-muted-foreground data-[state=on]:text-white data-[state=on]:bg-black h-7 rounded-sm tracking-tighter px-3"
+          >
+            Notice
+          </ToggleGroupItem>
           <ToggleGroupItem
             size={"sm"}
             value="reports"
@@ -179,12 +248,13 @@ export default function GroupContentHeader({ data }: Props) {
           >
             Reports
           </ToggleGroupItem>
+
           <ToggleGroupItem
             size={"sm"}
-            value="resolved"
+            value="polls"
             className="text-muted-foreground data-[state=on]:text-white data-[state=on]:bg-black h-7 rounded-sm tracking-tighter px-3"
           >
-            Resolved
+            Polls
           </ToggleGroupItem>
         </ToggleGroup>
         <div className="flex items-center w-fit gap-1 opacity-50 text-sm tracking-tight">

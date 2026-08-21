@@ -254,7 +254,7 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
                 className={cn(
                   activeToggle === "report"
                     ? "text-xs font-medium text-destructive/80 bg-destructive/10 border-destructive border"
-                    : "bg-c-bg text-xs text-muted-foreground font-medium hover:text-destructive/80 hover:bg-destructive/10 hover:border-destructive border-gray-300 border",
+                    : "bg-c-bg text-xs text-muted-foreground font-medium hover:text-red-800 hover:bg-destructive/10 hover:border-red-200 border-gray-300 border",
                 )}
               >
                 <InfoIcon />
@@ -264,8 +264,8 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
                 value="notice"
                 className={cn(
                   activeToggle === "notice"
-                    ? " text-xs  font-medium text-blue bg-blue-light border-blue border"
-                    : "bg-c-bg text-xs text-muted-foreground font-medium hover:text-blue hover:bg-blue-light hover:border-blue border-gray-300 border",
+                    ? " text-xs  font-medium text-blue bg-blue-light border-blue-200 border"
+                    : "bg-c-bg text-xs text-muted-foreground font-medium hover:text-blue hover:bg-blue-light hover:border-blue-200 border-gray-300 border",
                 )}
               >
                 <TbSpeakerphone />
@@ -275,8 +275,8 @@ export default function CreateMessage({ groupId }: { groupId: string }) {
                 value="announcement"
                 className={cn(
                   activeToggle === "announcement"
-                    ? " text-xs font-medium text-amber bg-amber-light border-amber border"
-                    : "bg-c-bg text-xs text-muted-foreground font-medium hover:text-amber hover:bg-amber-light hover:border-amber border-gray-300 border",
+                    ? " text-xs font-medium text-amber bg-amber-light border-amber/20 border"
+                    : "bg-c-bg text-xs text-muted-foreground font-medium hover:text-amber hover:bg-amber-light hover:border-amber/20 border-gray-300 border",
                 )}
               >
                 <StarIcon />

@@ -148,3 +148,5 @@ export const maxItems = 7;
 export const contentLimit = 4;
 
 export const sideBarLimit = 6;
+
+export const voting_close_times = ["In 1 day", "In 3 days", "In 1 week"];

@@ -73,6 +73,10 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.group.id,
       to: r.report.groupId,
     }),
+    polls: r.many.poll({
+      from: r.group.id,
+      to: r.poll.groupId,
+    }),
   },
 
   member: {
@@ -115,6 +119,14 @@ export const relations = defineRelations(schema, (r) => ({
     replies: r.many.reply({
       from: r.member.id,
       to: r.reply.memberId,
+    }),
+    polls: r.many.poll({
+      from: r.member.id,
+      to: r.poll.creatorId,
+    }),
+    votes: r.many.vote({
+      from: r.member.id,
+      to: r.vote.voterId,
     }),
   },
 
@@ -242,6 +254,33 @@ export const relations = defineRelations(schema, (r) => ({
     member: r.one.member({
       from: r.decision.memberId,
       to: r.member.id,
+    }),
+  },
+
+  vote: {
+    voter: r.one.member({
+      from: r.vote.voterId,
+      to: r.member.id,
+    }),
+
+    poll: r.one.poll({
+      from: r.vote.pollId,
+      to: r.poll.id,
+    }),
+  },
+
+  poll: {
+    creator: r.one.member({
+      from: r.poll.creatorId,
+      to: r.member.id,
+    }),
+    group: r.one.group({
+      from: r.poll.groupId,
+      to: r.group.id,
+    }),
+    votes: r.many.vote({
+      from: r.poll.id,
+      to: r.vote.pollId,
     }),
   },
 }));

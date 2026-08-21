@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { voting_close_times } from "./constants";
 
 export const categories = [
   "harassment_bullying",
@@ -90,4 +91,14 @@ export const createReasoningSchema = z.object({
     .string({ error: "Reason is required." })
     .min(1, { error: "Reason cannot be less than 1 character" })
     .max(500, { error: "Reason cannot be more than 500 characters." }),
+});
+export const createPollSchema = z.object({
+  question: z
+    .string({ error: "Question is required." })
+    .min(1, { error: "Question cannot be less than 1 character." }),
+  close_date: z
+    .string({ error: "Voting closing date is required." })
+    .refine((val) => voting_close_times.includes(val), {
+      error: "Invalid selection.",
+    }),
 });

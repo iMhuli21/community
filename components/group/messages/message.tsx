@@ -118,7 +118,7 @@ export default function Message({ message }: Props) {
                   : message.type === "notice"
                     ? "text-xs text-blue"
                     : message.type === "report"
-                      ? "text-xs text-destructive"
+                      ? "text-xs text-red-800"
                       : "text-xs",
               )}
             >

@@ -4,6 +4,7 @@ import {
   createCommentSchema,
   createGroupFormSchema,
   createMessageSchema,
+  createPollSchema,
   createReasoningSchema,
   createReasonSchema,
   editEmailSchema,
@@ -36,6 +37,7 @@ export type EditProfileSchema = z.infer<typeof editProfileSchema>;
 export type EditPasswordSchema = z.infer<typeof editPasswordSchema>;
 export type EditEmailSchema = z.infer<typeof editEmailSchema>;
 export type CreateReasoningSchema = z.infer<typeof createReasoningSchema>;
+export type CreatePollSchema = z.infer<typeof createPollSchema>;
 
 export type Route = {
   href: string;
@@ -132,4 +134,9 @@ export type UploadDocsType = {
   ufsUrl: string;
   size: number;
   type: string;
+};
+
+export type Option = {
+  id: number;
+  value: string;
 };

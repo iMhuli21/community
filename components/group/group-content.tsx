@@ -1,15 +1,17 @@
 "use client";
 
+import { toast } from "sonner";
+import Messages from "./messages/messages";
+import ErrorMessage from "../error-message";
 import { useQuery } from "@tanstack/react-query";
 import { getGroupFn } from "@/actions/group/get-group";
 import GroupContentHeader from "./group-content-header";
-import CreateMessage from "./create-message";
-import Messages from "./messages/messages";
-import { toast } from "sonner";
-import { hasPermissionFn } from "@/actions/member/has-permissions";
-import ErrorMessage from "../error-message";
+import { useSearchParams } from "next/navigation";
+import Polls from "./messages/polls/polls";
 
 export default function GroupContent({ id }: { id: string }) {
+  const searchParams = useSearchParams();
+
   const groupInfo = useQuery({
     queryKey: ["group", id],
     queryFn: () => getGroupFn(id),
@@ -30,9 +32,13 @@ export default function GroupContent({ id }: { id: string }) {
   return (
     <main>
       {groupInfo?.data && <GroupContentHeader data={groupInfo?.data} />}
-      <CreateMessage groupId={id} />
-      <section className="bg-c-bg p-5 min-h-dvh">
-        <Messages groupId={id} />
+      <section className="bg-c-bg min-h-dvh">
+        {!searchParams.get("filter") ||
+        searchParams.get("filter") === "polls" ? (
+          <Polls groupId={id} />
+        ) : (
+          searchParams.get("filter") && <Messages groupId={id} />
+        )}
       </section>
     </main>
   );
