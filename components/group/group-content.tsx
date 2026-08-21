@@ -33,8 +33,9 @@ export default function GroupContent({ id }: { id: string }) {
     <main>
       {groupInfo?.data && <GroupContentHeader data={groupInfo?.data} />}
       <section className="bg-c-bg min-h-dvh">
-        {!searchParams.get("filter") ||
-        searchParams.get("filter") === "polls" ? (
+        {!searchParams.get("filter") ? (
+          <Messages groupId={id} />
+        ) : searchParams.get("filter") === "polls" ? (
           <Polls groupId={id} />
         ) : (
           searchParams.get("filter") && <Messages groupId={id} />

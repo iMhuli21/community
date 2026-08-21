@@ -12,6 +12,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useMemo } from "react";
 import { joinGroupFn } from "@/actions/group/join-group";
 import { toast } from "sonner";
+import { EllipsisIcon } from "lucide-react";
 
 interface Props {
   info: {
@@ -113,7 +114,6 @@ export default function GroupCard({ info }: Props) {
                   <span className="text-xs opacity-50">{info.suburbArea}</span>
                 </div>
               </div>
-              {session?.user.id === info.creatorId && <GroupDropDown />}
             </div>
             <p className="text-[0.78rem] text-muted-foreground w-full line-clamp-2">
               {info.description}

@@ -7,32 +7,24 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import {
-  EllipsisIcon,
-  Footprints,
-  PenLineIcon,
-  ShieldUserIcon,
-} from "lucide-react";
+import { ShieldUserIcon } from "lucide-react";
+import { ReactNode } from "react";
+import PickModeratorsDialog from "./pick-moderators-dialog";
 
-export default function GroupDropDown() {
+export default function GroupDropDown({
+  children,
+  groupId,
+}: {
+  children: ReactNode;
+  groupId: string;
+}) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <EllipsisIcon />
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-40">
         <DropdownMenuLabel className="text-center">Actions</DropdownMenuLabel>
-        <DropdownMenuItem className="flex items-center">
-          <PenLineIcon className="size-3" />
-          Edit Group
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center">
-          <Footprints className="size-4" />
-          Leave Group
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center">
-          <ShieldUserIcon className="size-4" />
-          Pick Moderators
+        <DropdownMenuItem asChild>
+          <PickModeratorsDialog groupId={groupId} />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

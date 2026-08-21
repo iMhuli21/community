@@ -11,10 +11,17 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { joinGroupFn } from "@/actions/group/join-group";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { leaveGroupFn } from "@/actions/group/leave-group";
-import { CheckIcon, PinIcon, Share2Icon } from "lucide-react";
+import {
+  CheckIcon,
+  EllipsisVerticalIcon,
+  PinIcon,
+  Share2Icon,
+} from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
+import GroupDropDown from "./group-dropdown";
+import { hasPermissionFn } from "@/actions/member/has-permissions";
 
 interface Props {
   data: {
@@ -53,6 +60,12 @@ export default function GroupContentHeader({ data }: Props) {
   const { data: session } = useQuery({
     queryKey: ["client-auth"],
     queryFn: () => authClient.getSession(),
+  });
+
+  const hasPermissions = useQuery({
+    queryKey: ["permissions", data.id],
+    queryFn: () => hasPermissionFn(data.id),
+    enabled: Boolean(data.id),
   });
 
   const joinMutation = useMutation({
@@ -193,6 +206,11 @@ export default function GroupContentHeader({ data }: Props) {
               >
                 <CheckIcon /> Join
               </Button>
+            )}
+            {hasPermissions.data?.status && (
+              <GroupDropDown groupId={data.id}>
+                <EllipsisVerticalIcon className="size-4" />
+              </GroupDropDown>
             )}
           </div>
         </div>
