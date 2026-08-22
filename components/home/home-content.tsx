@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, toDate } from "@/lib/utils";
 import { fraunces } from "@/lib/fonts";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -13,25 +13,27 @@ import {
 import HomeSkeleton from "../skeletons/home-skeleton";
 import JoinedGroupCard from "../group/joined-groups";
 import ErrorMessage from "../error-message";
+import { getUserStats } from "@/actions/user/get-user-stats";
+import { formatDistanceToNow } from "date-fns";
 
 export default function HomeContent({ userName }: { userName: string }) {
-  const groupCount = useQuery({
-    queryKey: ["group-count"],
-    queryFn: getGroupsCountFn,
-  });
   const groupsData = useQuery({
     queryKey: ["limited-groups", contentLimit],
     queryFn: () => getJoinedGroupsFn(contentLimit),
   });
+  const userData = useQuery({
+    queryKey: ["user-data"],
+    queryFn: getUserStats,
+  });
 
-  if (groupsData.isLoading || groupCount.isLoading) {
+  if (groupsData.isLoading || userData.isLoading) {
     return <HomeSkeleton />;
   }
 
-  if (groupsData.error || groupCount.error) {
+  if (groupsData.error || userData.error) {
     return (
       <ErrorMessage
-        message={groupCount.error?.message || groupsData.error?.message}
+        message={userData.error?.message || groupsData.error?.message}
       />
     );
   }
@@ -53,8 +55,8 @@ export default function HomeContent({ userName }: { userName: string }) {
             <br /> <em className="italic text-green">your communities.</em>
           </h1>
           <span className="tracking-tight text-muted-foreground">
-            You&apos;re a member of {groupCount?.data ?? "0"} communities. 4 new
-            updates since you last checked in.
+            You&apos;re a member of {userData?.data?.communities ?? "0"}{" "}
+            communities.
           </span>
           <div className="flex items-center gap-4">
             <Button size="lg" variant="outline">
@@ -69,26 +71,35 @@ export default function HomeContent({ userName }: { userName: string }) {
       <section className="bg-c-bg border border-gray-300 grid grid-cols-2 divide-y md:divide-y-0 md:grid-cols-4  rounded-lg divide-x divide-gray-300 ">
         <div className="p-4">
           <h4 className={cn(fraunces.className, "text-2xl font-medium")}>
-            {groupCount?.data ?? 0}
+            {userData?.data?.communities ?? 0}
           </h4>
           <span className="text-muted-foreground font-medium text-sm tracking-tight">
             Communities joined
           </span>
         </div>
         <div className="p-4">
-          <h4 className={cn(fraunces.className, "text-2xl font-medium")}>4</h4>
+          <h4 className={cn(fraunces.className, "text-2xl font-medium")}>0</h4>
           <span className="text-muted-foreground font-medium text-sm tracking-tight">
             Unread updates
           </span>
         </div>
         <div className="p-4">
-          <h4 className={cn(fraunces.className, "text-2xl font-medium")}>2</h4>
+          <h4
+            className={cn(
+              fraunces.className,
+              "text-2xl font-medium capitalize",
+            )}
+          >
+            {formatDistanceToNow(toDate(userData?.data?.user?.createdAt ?? ""))}
+          </h4>
           <span className="text-muted-foreground font-medium text-sm tracking-tight">
-            Reports you&apos;ve filed
+            Joined For
           </span>
         </div>
         <div className="p-4">
-          <h4 className={cn(fraunces.className, "text-2xl font-medium")}>1</h4>
+          <h4 className={cn(fraunces.className, "text-2xl font-medium")}>
+            {userData.data?.moderating_communities}
+          </h4>
           <span className="text-muted-foreground font-medium text-sm tracking-tight">
             Group you moderate
           </span>
